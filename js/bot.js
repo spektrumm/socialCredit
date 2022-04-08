@@ -11,7 +11,7 @@ client.once('ready', () => {
 //if userID is '-1' function returns all messages from all users.
 function getAllMessages(channelID, userID){
     const channel = client.channel.cache.get(channelID);
-    let messages = [];
+    const messages = new Map();
     let message = await channel.messages.fetch({limit:1})
         .then(messagePage => (messagePage === 1 ? messagePage.at(0) : null));
 
@@ -27,18 +27,18 @@ function getAllMessages(channelID, userID){
 };
 
 //storeMessage stores msg into the messages array according to user ID
-function storeMessage(msg, messages){
+function storeMessage(msg, messageMap){
     let accountID = msg.author.id;
     let message = msg.content;
 
     console.log(user, message);
 
-    let index = messages.indexOf(user);
     //first message from this user
-    if(index === -1){
-        messages.push({user: accountID, messages: [message]})
+    if(!messageMap.has(accountID)){
+        messageMap.set(accountID, [message])
     }else{
-        messages[index] = {user: accountID, messages: [messages.split(), message]};
+        let messageArray = messagesMap.get(accountID);
+        messageMap.set(accountID, messageArray.push(message));
     }
 }
 
@@ -46,9 +46,15 @@ function storeMessage(msg, messages){
 function storeMessagesToJSON(messages){
     let messageJSON = JSON.stringify(messages);
     return messageJSON;
-}
+};
 
 
+function changeRole(accountID, socialCredit){
+    const creditRanges = creditRangesFromFile();
+};
+
+
+//reacting to new messages
 client.on('message', message =>{
     if(!message.content.startsWith(prefix) || message.author.bot) return;
 
