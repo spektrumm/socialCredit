@@ -1,25 +1,19 @@
-import json
+
+from fileinput import filename
 from flair.data import Sentence
 from flair.models import TextClassifier
+from segtok.segmenter import split_single
+#import panda as pd
+import re
+import functions as fn
+import json
 
-sia = TextClassifier.load("en-sentiment")
-
-
-def flairPrediction(x):
-    sent = Sentence(x)
-    sia.predict(sent)
-    score = sent.labels[0]
-    if "POSITIVE" in str(score):
-        return "pos"
-    elif "NEGATIVE" in str(score):
-        return "neg"
-    else:
-        return "neu"
+#classifier = TextClassifier.load("en-sentiment")
 
 
-with open("msg.json", 'r') as jsonFile:
-    data = json.load(jsonFile)
+fileName = 'msg.json'
 
-    tempC = data['content']
-    msgContent = tempC[1:-1]
-    print(msgContent)
+msgData = []
+msgData = fn.parseJson(fileName)
+
+print(msgData)
