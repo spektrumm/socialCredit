@@ -8,16 +8,18 @@ def parseJson(fileName):
         msgContent = data['content']
         userID = data['authorID']
         messageID = data['id']
-        #msgContent = tempC[1:-1]
-        # print(msgContent)  # debug
         print(msgContent)
     return msgContent, userID, messageID
 
 
-def receiveJson(jsonData):
+def jsonDump(list):
+    jsonData = {'content': list[0],
+                'userID': list[1],
+                'authorID': list[2]}
 
-    parsedJson = json.loads(jsonData)
-    print(json.dumps(parsedJson, indent=4, sort_keys=True))
+    with open('jsonOut.json', 'w') as out:
+        out.write(jsonData)
+
 
 # def flairPrediction(x):
    # sent = Sentence(x)

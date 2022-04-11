@@ -2,6 +2,7 @@
 from fileinput import filename
 from flair.data import Sentence
 from flair.models import TextClassifier
+from py.functions import jsonDump
 from segtok.segmenter import split_single
 #import panda as pd
 import re
@@ -17,3 +18,5 @@ msgData = []
 msgData = fn.parseJson(fileName)
 
 print(msgData)
+
+jsonDump(msgData)
