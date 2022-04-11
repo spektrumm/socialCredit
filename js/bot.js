@@ -1,4 +1,5 @@
 const discord = require('discord.js');
+const fs = require('fs');
 
 const client = new discord.Client();
 const prefix = '-soc';
@@ -9,71 +10,58 @@ client.once('ready', () => {
 
 //function retunrs all messages from channelID sent by specified userID
 //if userID is '-1' function returns all messages from all users.
-function getAllMessages(channelID, userID){
-    const channel = client.channel.cache.get(channelID);
-    const messages = new Map();
-    let message = await channel.messages.fetch({limit:1})
-        .then(messagePage => (messagePage === 1 ? messagePage.at(0) : null));
+async function getAllChannelMessages(guildId, channelId){
+    const guild = await client.guilds.fetch(guildId);
+    const channel = guild.channels.cache.get(channelId);
+    const messages = [];
+    let message = await channel.messages.fetch({limit: 1})
+        .then(messageFetch => (messageFetch.size === 1 ? messageFetch.first() : null))
+    messages.push(message);
 
     while(message){
-        await channel.messages.fetch({limit:100})
-            .then(messagePage => {
-                messagePage.forEach(msg => storeMessage(msg, messages));
+        await channel.messages.fetch({limit: 100, before: message.id})
+            .then(messageFetch => {
+                messageFetch.forEach(msg => messages.push(msg));
 
-                message = 0 < messagePage.size ? messagePage.at(messagePage.size -1) : null;
+                //updating pointer
+                message = 0 < messageFetch.size ? messageFetch.last() : null;
             })
     }
-    return messages;
+
+    let messagesJson = JSON.stringify(messages);
+
+    fs.writeFile('/mnt/d/repos/socialCredit/messageJsons/' + channel.name + '_messages.json', messagesJson, err => {
+        if(err){
+            console.error(err);
+            return;
+        }
+    });
+    console.log('...done');
 };
 
-//storeMessage stores msg into the messages array according to user ID
-function storeMessage(msg, messageMap){
-    let accountID = msg.author.id;
-    let message = msg.content;
-
-    console.log(user, message);
-
-    //first message from this user
-    if(!messageMap.has(accountID)){
-        messageMap.set(accountID, [message])
-    }else{
-        let messageArray = messagesMap.get(accountID);
-        messageMap.set(accountID, messageArray.push(message));
-    }
-}
-
-//storeMessagesToJSON converts messages to JSON type
-function storeMessagesToJSON(messages){
-    let messageJSON = JSON.stringify(messages);
-    return messageJSON;
+async function getAllMessages(guildId){
+    const guild = await client.guilds.fetch(guildId);
+    guild.channels.cache.forEach(channel => {
+        if(channel.type === 'text'){ 
+            console.log('fetching - ' + channel.name);
+            getAllChannelMessages(guildId, channel.id);
+        }
+    });
 };
-
-
-function changeRole(accountID, socialCredit){
-    const creditRanges = creditRangesFromFile();
-};
-
 
 //reacting to new messages
 client.on('message', message =>{
     if(!message.content.startsWith(prefix) || message.author.bot) return;
-
+    
     const args = message.content.slice(prefix.length).split(/ +/);
-    console.log(args.length);
     const command = args.shift().toLowerCase();
 
-    if(command === 'credit' && args.length > 2){
-        // if(args.length > 3){
-
-        // }
-        
-        if(isNaN(args[2])){
-            addTextToImage("./+credit.jpg", args[2])
-
-        }
-        
+    if(args[0] === 'getAllMessages'){
+        console.log('getting all messages');
+        getAllMessages('562501878903078922');
+        console.log('all messages fetched');
     }
-
+    
 });
 
 
