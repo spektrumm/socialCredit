@@ -1,5 +1,5 @@
 #import panda as pd
-import re
+# import re
 import nlpFunc as nlp
 import helper as h
 import os
@@ -14,12 +14,13 @@ dir = 'tempJson'
 while True:
     if len(os.listdir(path=dir)) != 0:
         print('new file found')
-        data = h.prepData()
+        data = h.prepData(dir)
 
         predictScore = nlp.flairPrediction(data[0], sentAn)
-        outList = [str(predictScore), data[1], data[2]]
+        data[0] = predictScore
+        inFile = f'{data[2]}-in.json'
 
-        h.fileIO(outList)
+        h.fileIO(data, inFile)
     else:
         print('no new files... sleeping')
         time.sleep(15)
