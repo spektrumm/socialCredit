@@ -1,22 +1,16 @@
-
-from fileinput import filename
-from flair.data import Sentence
-from flair.models import TextClassifier
-from py.functions import jsonDump
-from segtok.segmenter import split_single
 #import panda as pd
 import re
-import functions as fn
-import json
-
-#classifier = TextClassifier.load("en-sentiment")
+import jsonFunc as jFn
+import nlpFunc as nlp
 
 
 fileName = 'msg.json'
 
 msgData = []
-msgData = fn.parseJson(fileName)
+msgData = jFn.parseJson(fileName)
 
 print(msgData)
 
-jsonDump(msgData)
+jFn.jsonDump(msgData)
+
+jFn.deleteFile()
