@@ -6,7 +6,7 @@ from os import remove
 
 
 def parseJson(fileName):
-    sourcePath = 'messageJsons/msg.json'
+    sourcePath = 'tempJson/msg.json'
     if path.exists(sourcePath):
         destPath = 'msg.json'
         newLocation = shutil.move(sourcePath, destPath)
