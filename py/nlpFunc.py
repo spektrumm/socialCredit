@@ -14,8 +14,18 @@ def flairPrediction(x, classifier):
     classifier.predict(sent)
     score = sent.labels[0]
     if "POSITIVE" in str(score):
-        return "pos"
+        isoScore = sent.labels[0].score
+        pOutScore = isoScore * 100
+        print(f'{pOutScore} is the adjusted output score')
+        return pOutScore
     elif "NEGATIVE" in str(score):
-        return "neg"
+        isoScore = sent.labels[0].score
+        nOutScore = isoScore * -100
+        print(f'{nOutScore} is the adjusted output score')
+        return nOutScore
     else:
-        return "neu"
+        isoScore = sent.labels[0].score
+        outScore = isoScore * 100
+        print(f'{outScore} is the adjusted output score')
+        print('neu')
+        return outScore

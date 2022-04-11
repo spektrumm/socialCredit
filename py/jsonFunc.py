@@ -22,7 +22,7 @@ def parseJson(fileName):
 
 
 def jsonDump(list):
-    jsonData = {'content': list[0],
+    jsonData = {'score': list[0],
                 'userID': list[1],
                 'authorID': list[2]}
     fileName = 'out.json'
