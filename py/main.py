@@ -1,25 +1,27 @@
 #import panda as pd
-import re
-import jsonFunc as jFn
+# import re
 import nlpFunc as nlp
+import helper as h
+import os
+import time
 
 # initialize the flair classifier
 sentAn = nlp.classifierInit()
+dir = 'tempJson'
 
-# grab msg and parse for specific data
-fileName = 'msg.json'  # temp
-msgData = []
-msgData = jFn.parseJson(fileName)
 
-print(msgData)  # debug
+# main loop
+while True:
+    if len(os.listdir(path=dir)) != 0:
+        print('new file found')
+        data = h.prepData(dir)
 
-# pull score from msg data
-msgContent = msgData[0]
-predictScore = nlp.flairPrediction(msgContent, sentAn)
-outList = [str(predictScore), msgData[1], msgData[2]]
+        predictScore = nlp.flairPrediction(data[0], sentAn)
+        data[0] = predictScore
+        inFile = f'{data[2]}-in.json'
 
-print(outList)  # debug
-
-jFn.jsonDump(outList)
-
-jFn.deleteFile()
+        h.fileIO(data, inFile)
+    else:
+        print('no new files... sleeping')
+        time.sleep(15)
+        print('checking for new files...')

@@ -1,2 +1,5 @@
 /js/node_modules
 /js/package-lock.json
+/messageJsons
+/py/__pycache__
+/.vscode

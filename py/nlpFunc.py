@@ -1,7 +1,7 @@
 from fileinput import filename
 from flair.data import Sentence
 from flair.models import TextClassifier
-from segtok.segmenter import split_single
+#from segtok.segmenter import split_single
 
 
 def classifierInit():
