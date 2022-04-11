@@ -1,6 +1,5 @@
 #import panda as pd
 import re
-import jsonFunc as jFn
 import nlpFunc as nlp
 import helper as h
 import os
