@@ -7,3 +7,5 @@
 /legacyFiles
 /bulkResults
 /.DS_Store
+/mysql/node_modules
+/mysql/package-lock.json
