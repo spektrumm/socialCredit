@@ -4,5 +4,6 @@
 /py/__pycache__
 /.vscode
 /tempJson
-/tempFiles
+/legacyFiles
 /bulkResults
+/.DS_Store
