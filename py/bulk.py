@@ -8,7 +8,7 @@ import timeit
 
 # start of script inits
 tic = timeit.default_timer()
-sentAn = nlp.classifierInit('en-sentiment')
+sentAn = nlp.classifierInit()
 dir = 'messageJsons'
 
 
@@ -27,6 +27,7 @@ def stepThroughMsgs(fileName):
 # scrape directory of files
 allChannels = os.listdir(path=dir)
 channelIndex = 0
+totalCount = 0
 scoresDict = {}
 messageHistory = {}
 for channelFiles in allChannels:
@@ -34,13 +35,14 @@ for channelFiles in allChannels:
     channelMsgs = allChannels[channelIndex]
     channelIndex += 1
     jsonData = stepThroughMsgs(channelMsgs)
-    if jsonData != None:
+    if jsonData != [None]:
         for messages in jsonData:
             currentMsg = jsonData[msgCount]
             msgCount += 1
             msgCon = currentMsg['content']
-            userID = currentMsg['authorID']
             messageID = currentMsg['id']
+            userID = currentMsg['authorID']
+
             if msgCon != '':
 
                 # do sentiment analysis on msgCon
@@ -52,7 +54,7 @@ for channelFiles in allChannels:
                     scoresDict.update({userID: newScore})
                 else:  # if user id doesnt already exist
                     scoresDict.update({userID: predictScore})
-
+                totalCount += 1
                 # update a dictionary w message ID and it's respective score change as key value pair
                 messageHistory.update({messageID: predictScore})
             else:
@@ -60,15 +62,17 @@ for channelFiles in allChannels:
     else:
         print('current channel json file is empty, moving on...')
 
+
 toc = timeit.default_timer()
 totalTime = toc - tic
 
 with open('legacyScores.json', 'w') as jsonOut:
-    jsonObj = json.dumps(scoresDict, indent=4)
+    json.dump(scoresDict, jsonOut)
     print('wrote scores dict to file')
 
 with open('messageLog.json', 'w') as msgLogFile:
-    logObj = json.dumps(messageHistory, indent=4)
+    json.dump(messageHistory, msgLogFile)
     print('wrote message log dict to file')
 
 print(f'Total Time elapsed for the script was: {totalTime} seconds')
+print(f'The total number of messages processed was: {totalCount}')
