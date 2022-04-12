@@ -48,6 +48,10 @@ for channelFiles in allChannels:
                     scoresDict.update({userID: newScore})
                 else:  # if user id doesnt already exist
                     scoresDict.update({userID: predictScore})
+            else:
+                print('current msg content is empty, skipping...')
+    else:
+        print('current channel json file is empty, moving on...')
 
 with open('legacyScores.json', 'w') as jsonOut:
     jsonObj = json.dumps(scoresDict, indent=4)
