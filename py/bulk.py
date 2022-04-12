@@ -1,3 +1,4 @@
+from email import message
 import nlpFunc as nlp
 import json
 import os
@@ -26,6 +27,7 @@ def stepThroughMsgs(fileName):
 allChannels = os.listdir(path=dir)
 channelIndex = 0
 scoresDict = {}
+messageHistory = {}
 for channelFiles in allChannels:
     msgCount = 0
     channelMsgs = allChannels[channelIndex]
@@ -37,6 +39,7 @@ for channelFiles in allChannels:
             msgCount += 1
             msgCon = currentMsg['content']
             userID = currentMsg['authorID']
+            messageID = currentMsg['id']
             if msgCon != '':
 
                 # do sentiment analysis on msgCon
@@ -48,6 +51,9 @@ for channelFiles in allChannels:
                     scoresDict.update({userID: newScore})
                 else:  # if user id doesnt already exist
                     scoresDict.update({userID: predictScore})
+
+                # update a dictionary w message ID and it's respective score change as key value pair
+                messageHistory.update({messageID: predictScore})
             else:
                 print('current msg content is empty, skipping...')
     else:
@@ -55,3 +61,6 @@ for channelFiles in allChannels:
 
 with open('legacyScores.json', 'w') as jsonOut:
     jsonObj = json.dumps(scoresDict, indent=4)
+
+with open('messageLog.json', 'w') as msgLogFile:
+    logObj = json.dumps(messageHistory, indent=4)
