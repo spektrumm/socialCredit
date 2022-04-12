@@ -3,3 +3,6 @@
 /messageJsons
 /py/__pycache__
 /.vscode
+/tempJson
+/tempFiles
+/bulkResults
