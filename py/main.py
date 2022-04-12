@@ -1,5 +1,3 @@
-#import panda as pd
-# import re
 import nlpFunc as nlp
 import helper as h
 import os
@@ -23,5 +21,5 @@ while True:
         h.fileIO(data, inFile)
     else:
         print('no new files... sleeping')
-        time.sleep(15)
+        time.sleep(1)
         print('checking for new files...')
