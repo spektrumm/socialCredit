@@ -1,68 +1,76 @@
-const discord = require('discord.js');
+const Discord = require('discord.js');
 const fs = require('fs');
 
-const client = new discord.Client();
-const prefix = '-soc';
+const client = new Discord.Client();
+const PREFIX = '&';
 
-client.once('ready', () => {
-    console.log("socialCredit is online!")
+
+
+client.commands = new Map();
+
+client.on('ready', () =>
+{
+    console.info(`Logged in as ${client.user.tag}!`);
+
+    client.user.setActivity("with Zane's feelings | &help", { type: 'PLAYING' });
+
+    fs.readdir('./commands/', (error, files) =>
+    {
+        if (error) throw error;
+
+        files.forEach(file =>
+        {
+            if (!file.endsWith('.js')) return;
+
+            try
+            {
+                const properties = require(`./commands/${file}`);
+
+                properties.help.aliases.forEach(alias =>
+                {
+                    client.commands.set(alias, properties);
+                });
+
+                client.commands.set(properties.help.name, properties);
+            }
+            catch (error)
+            {
+                throw error;
+            }
+        });
+    });
 });
 
-//function retunrs all messages from channelID sent by specified userID
-//if userID is '-1' function returns all messages from all users.
-async function getAllChannelMessages(guildId, channelId){
-    const guild = await client.guilds.fetch(guildId);
-    const channel = guild.channels.cache.get(channelId);
-    const messages = [];
-    let message = await channel.messages.fetch({limit: 1})
-        .then(messageFetch => (messageFetch.size === 1 ? messageFetch.first() : null))
-    messages.push(message);
+client.on('message', message =>
+{
+    const embed = new Discord.MessageEmbed()
+        .setAuthor("")
+        .setColor("#32CD32");
 
-    while(message){
-        await channel.messages.fetch({limit: 100, before: message.id})
-            .then(messageFetch => {
-                messageFetch.forEach(msg => messages.push(msg));
+    if (message.content[0] != PREFIX) return;
 
-                //updating pointer
-                message = 0 < messageFetch.size ? messageFetch.last() : null;
-            })
+    var args = message.content.substring(1).split(" ");
+
+    // `Cmd` definition
+    var cmd = args.shift();
+
+    const command = client.commands.get(cmd);
+
+    if (command) command.run(client, message, cmd, args);
+
+    if (!command)
+    {
+        embed.setDescription(`
+        The command: \`${PREFIX}${cmd}\` is not recognised. 
+        
+        The prefix for this server is: \`${PREFIX}\`
+        For a list of commands, use \`${PREFIX}\`help`
+        );
+
+        return message.channel.send(embed);
     }
-
-    let messagesJson = JSON.stringify(messages);
-
-    fs.writeFile('/mnt/d/repos/socialCredit/messageJsons/' + channel.name + '_messages.json', messagesJson, err => {
-        if(err){
-            console.error(err);
-            return;
-        }
-    });
-    console.log('...done');
-};
-
-async function getAllMessages(guildId){
-    const guild = await client.guilds.fetch(guildId);
-    guild.channels.cache.forEach(channel => {
-        if(channel.type === 'text'){ 
-            console.log('fetching - ' + channel.name);
-            getAllChannelMessages(guildId, channel.id);
-        }
-    });
-};
-
-//reacting to new messages
-client.on('message', message =>{
-    if(!message.content.startsWith(prefix) || message.author.bot) return;
-    
-    const args = message.content.slice(prefix.length).split(/ +/);
-    const command = args.shift().toLowerCase();
-
-    if(args[0] === 'getAllMessages'){
-        console.log('getting all messages');
-        getAllMessages('562501878903078922');
-        console.log('all messages fetched');
-    }
-    
 });
+
 
 
 client.login('OTYwMjk0MzI5Nzc4MzMxNzA4.YkoVyQ.32L_pqPkLA7QWAvLkTeMGZvp3GM');
