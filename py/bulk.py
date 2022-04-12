@@ -2,12 +2,12 @@ import nlpFunc as nlp
 import json
 import os
 import shutil
-import time
+import timeit
 # this will be a standalone script for processing previously sent messages in bulk.
 
 
 # start of script inits
-tic = time.clock()
+tic = timeit.default_timer()
 sentAn = nlp.classifierInit('en-sentiment')
 dir = 'messageJsons'
 
@@ -60,7 +60,7 @@ for channelFiles in allChannels:
     else:
         print('current channel json file is empty, moving on...')
 
-toc = time.clock()
+toc = timeit.default_timer()
 totalTime = toc - tic
 
 with open('legacyScores.json', 'w') as jsonOut:
@@ -71,4 +71,4 @@ with open('messageLog.json', 'w') as msgLogFile:
     logObj = json.dumps(messageHistory, indent=4)
     print('wrote message log dict to file')
 
-print(f'Total Time elapsed for the script was: {totalTime}')
+print(f'Total Time elapsed for the script was: {totalTime} seconds')
