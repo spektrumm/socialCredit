@@ -31,8 +31,8 @@ app.get('/createdb', (req,res) =>{
 })
 
 //Create Table
-app.get('/createTable', (req,res) =>{
-    let sql = 'CREATE TABLE userScores(id int, name VARCHAR(255), score int)';
+app.get('/createUserTable', (req,res) =>{
+    let sql = 'CREATE TABLE users(userId int, name VARCHAR(255), score int, multiplier float, lastMessageNegative bool, lastMessagePositive bool, PRIMARY KEY (userId))';
     db.query(sql, err=> {
         if(err){
             throw err
@@ -41,16 +41,52 @@ app.get('/createTable', (req,res) =>{
     })
 })
 
-app.get('/loadLegacy', (req,res) =>{
-    const jsonData = require('D:\\repos\\socialCredit\\legacyFiles\\legacyScores2.json');
+app.get('/createMessageTable', (req,res) =>{
+    let sql = 'CREATE TABLE messages(messageId int, userId int, content VARCHAR(10000), rawScoreChange int, effectiveScoreChange int, score int, PRIMARY KEY (messageId))';
+    db.query(sql, err=> {
+        if(err){
+            throw err
+        }
+        res.send('Table Created')
+    })
+})
+
+//alter table
+app.get('/alterTable', (req,res) =>{
+    let sql = 'ALTER TABLE messages ADD FOREIGN KEY (userId) REFERENCES users(userId)';
+    db.query(sql, err=> {
+        if(err){
+            throw err
+        }
+        res.send('Table Altered')
+    })
+})
+
+//Delete Table
+app.get('/dropTable', (req,res) =>{
+    let sql = 'DROP TABLE userScores';
+    db.query(sql, err=> {
+        if(err){
+            throw err
+        }
+        res.send('Table dropped')
+    })
+})
+
+app.get('/loadUsers', (req,res) =>{
+    const jsonData = require('D:\\repos\\socialCredit\\legacyFiles\\users.json');
     let post = [];
     jsonData.forEach(user => {
-        let id = user.authorID;
+        let userId = user.userId;
+        let name = user.name;
         let score = user.score;
-        post.push([id,'temp',score]);
+        let multiplier = user.multiplier;
+        let lastMessageNegative = user.lastMessageNegative;
+        let lastMessagePositive = user.lastMessagePositive;
+        post.push([userId, name, score, multiplier, 0]);
 
     })
-    let sql = "INSERT INTO userscores (id, name, score) VALUES ?";
+    let sql = "INSERT INTO users (userId, name, score, multiplier, messageStreak) VALUES ?";
 
     console.log(post);
 
@@ -58,10 +94,12 @@ app.get('/loadLegacy', (req,res) =>{
         if(err) {
             throw err
         }
-        res.send('added legacy to db')
+        res.send('added users to db')
     })
 
 });
+
+
 
 app.listen('3000', ()=> {
     console.log('Server started on port 3000')

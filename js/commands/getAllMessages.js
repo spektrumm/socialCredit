@@ -33,7 +33,7 @@ async function getAllChannelMessages(client, guildId, channelId){
     console.log('...done');
 };
 
-module.exports.run = async (client, message, cmd, args) => {
+module.exports.run = async (client, message, cmd, args, db) => {
     let guildId = args;
     const guild = await client.guilds.fetch(guildId);
     guild.channels.cache.forEach(channel => {

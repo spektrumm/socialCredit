@@ -1,10 +1,26 @@
 const Discord = require('discord.js');
 const fs = require('fs');
+const mysql = require('mysql');
 
-const client = new Discord.Client();
+
+const client = new Discord.Client({fetchAllMembers: true});
 const PREFIX = '&';
 
+//load db config
+const db = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'nodemysql'
+})
 
+//Connect to mysql environment  
+db.connect(err => {
+    if(err){
+        throw err
+    }
+    console.log('MySql Connected');
+});
 
 client.commands = new Map();
 
@@ -56,7 +72,7 @@ client.on('message', message =>
 
     const command = client.commands.get(cmd);
 
-    if (command) command.run(client, message, cmd, args);
+    if (command) command.run(client, message, cmd, args, db);
 
     if (!command)
     {
