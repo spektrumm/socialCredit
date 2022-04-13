@@ -1,17 +1,18 @@
 import nlpFunc as nlp
 import helper as h
-import os
+from os import listdir
 import time
 
-# initialize the flair classifier
+# initialize the flairNLP classifier
 sentAn = nlp.classifierInit()
+# set this variable to be where your incoming message files will be from
 dir = 'tempJson'
 
 
 # main loop
 while True:
-    if len(os.listdir(path=dir)) != 0:
-        print('new file found')
+    if len(listdir(path=dir)) != 0:  # check if the directory is not empty
+        print('new file found')  # debug
         data = h.prepData(dir)
 
         predictScore = nlp.flairPrediction(data[0], sentAn)
@@ -23,3 +24,4 @@ while True:
         print('no new files... sleeping')
         time.sleep(1)
         print('checking for new files...')
+        # these print messages are mainly for debug, so you can see that the bot is still running while it's "not doing anything".

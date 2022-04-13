@@ -12,6 +12,7 @@ sentAn = nlp.classifierInit()
 dir = 'messageJsons'
 
 
+# take in a variable file name and step through each key value entry in the respective json file
 def stepThroughMsgs(fileName):
     sourcePath = f'messageJsons/{fileName}'
     if os.path.exists(sourcePath):
@@ -19,23 +20,26 @@ def stepThroughMsgs(fileName):
         newLocation = shutil.move(sourcePath, destPath)
         print('The incoming %s file has been moved to the root directory %s' %
               (sourcePath, newLocation))
-    with open(fileName, 'r') as jsonFile:
-        data = json.load(jsonFile)
-        return data
+        with open(fileName, 'r', encoding='utf-8') as jsonFile:
+            data = json.load(jsonFile)
+            return data
 
 
 # scrape directory of files
 allChannels = os.listdir(path=dir)
+# define necessary variables
 channelIndex = 0
 totalCount = 0
 scoresDict = {}
 messageHistory = {}
+
+# loop through the files in the directory of all channel messages files
 for channelFiles in allChannels:
     msgCount = 0
     channelMsgs = allChannels[channelIndex]
     channelIndex += 1
     jsonData = stepThroughMsgs(channelMsgs)
-    if jsonData != [None]:
+    if jsonData != [None]:  # check if the file contents are not empty
         for messages in jsonData:
             currentMsg = jsonData[msgCount]
             msgCount += 1
@@ -43,7 +47,7 @@ for channelFiles in allChannels:
             messageID = currentMsg['id']
             userID = currentMsg['authorID']
 
-            if msgCon != '':
+            if msgCon != '':  # check if the content of the selected message is not empty
 
                 # do sentiment analysis on msgCon
                 predictScore = nlp.flairPrediction(msgCon, sentAn)
@@ -62,17 +66,20 @@ for channelFiles in allChannels:
     else:
         print('current channel json file is empty, moving on...')
 
-
+# get total process time (because why not)
 toc = timeit.default_timer()
 totalTime = toc - tic
 
+# output userID : totalScore pairs to a single file for us with bot
 with open('legacyScores.json', 'w') as jsonOut:
     json.dump(scoresDict, jsonOut)
     print('wrote scores dict to file')
 
+# output log of all processed messages (for referring individual acquired scores to their respective messages)
 with open('messageLog.json', 'w') as msgLogFile:
     json.dump(messageHistory, msgLogFile)
     print('wrote message log dict to file')
 
+# process info
 print(f'Total Time elapsed for the script was: {totalTime} seconds')
 print(f'The total number of messages processed was: {totalCount}')
