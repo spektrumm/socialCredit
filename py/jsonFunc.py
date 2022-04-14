@@ -22,14 +22,16 @@ def parseJson(fileName, directory):  # move the selected file and parse it for s
         msgContent = data['content']
         userID = data['authorID']
         messageID = data['id']
-        outList = [msgContent, userID, messageID]
+        channelID = data['channelID']
+        outList = [msgContent, userID, messageID, channelID]
     return outList
 
 
 def jsonDump(list):  # json.dump new data into an output json file, and move it to the correct directory
     jsonData = {'score': list[0],
                 'authorID': list[1],
-                'messageID': list[2]}
+                'messageID': list[2],
+                'channelID': list[3]}
     tName = jsonData['messageID']
     fileName = f'{tName}-out.json'
     with open(fileName, 'w') as out:

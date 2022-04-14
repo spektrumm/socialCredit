@@ -46,6 +46,7 @@ for channelFiles in allChannels:
             msgCon = currentMsg['content']
             messageID = currentMsg['id']
             userID = currentMsg['authorID']
+            channelID = currentMsg['channelID']
 
             if msgCon != '':  # check if the content of the selected message is not empty
 
@@ -60,7 +61,10 @@ for channelFiles in allChannels:
                     scoresDict.update({userID: predictScore})
                 totalCount += 1
                 # update a dictionary w message ID and it's respective score change as key value pair
-                messageHistory.update({messageID: predictScore})
+                tempDict = {'channelID': channelID, 'messageID': messageID,
+                            'scoreChange': predictScore, 'authorID': userID}
+                messageHistory.update({totalCount: tempDict})
+
             else:
                 print('current msg content is empty, skipping...')
     else:
