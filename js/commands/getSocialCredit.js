@@ -1,7 +1,8 @@
 const getUserFromMention = require('../functions/getUserFromMention.js');
+import scoreFromDB from '.../functions/scoreFunctions.js';
 
-module.exports.run = async (client, message, cmd, args, db) => {
-    
+module.exports.run = async (client, message, cmd, args, db) => { // why do we need cmd arg here?
+    /*
     //update score values from legacy scores
     let user = getUserFromMention.run(client, args[0]);
     let userId = user.id;
@@ -15,9 +16,13 @@ module.exports.run = async (client, message, cmd, args, db) => {
             throw err
         }
         let score = result[0].score;
-        
-        message.channel.send(`<@${userId}>'s Social Credit is ${score}.`);
     });
+
+    */
+
+    userScore = scoreFromDB(client, message, args, db);
+    message.channel.send(`<@${userId}>'s Social Credit is ${userScore}.`);
+    
 };
 
 
