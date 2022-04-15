@@ -27,8 +27,8 @@ function scoreMultiplier(streak, rawScore){
 
     if (streak <= 5 && streak >= -5){
         streakWeight = multiplierWeight[Math.abs(streak)];
-        if (streak < 5 && streak >= 0){
-            if (!rawScore < 0){ // +ve streak, +ve msg
+        if (streak <= 5 && streak >= 0){
+            if (rawScore > 0){ // +ve streak, +ve msg
                 calcScore = (rawScore * streakWeight);
                 newStreak = streak++;
                 //calcScore = (rawScore * (1- Math.abs(streakWeight)));
@@ -44,8 +44,8 @@ function scoreMultiplier(streak, rawScore){
                 calcScore = (rawScore * streakWeight);
             }
         }
-        else if (streak > -5 && streak <= 0){
-            if (!rawScore < 0){ // -ve streak, +ve msg
+        else if (streak >= -5 && streak <= 0){
+            if (rawScore > 0){ // -ve streak, +ve msg
                 calcScore = (rawScore * streakWeight);
                 newStreak = 0;
             }
