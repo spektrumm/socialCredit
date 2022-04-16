@@ -1,6 +1,9 @@
 const Discord = require('discord.js');
 const fs = require('fs');
 const mysql = require('mysql');
+const newMessage = require('./functions/newMessage.js');
+
+
 
 
 const client = new Discord.Client({fetchAllMembers: true});
@@ -8,7 +11,7 @@ const PREFIX = '&';
 
 //load db config
 const db = mysql.createConnection({
-    host: 'localhost',
+    host: '127.0.0.1',
     user: 'root',
     password: '',
     database: 'nodemysql'
@@ -63,28 +66,33 @@ client.on('message', message =>
         .setAuthor("")
         .setColor("#32CD32");
 
-    if (message.content[0] != PREFIX) return;
+    if (message.content[0] == PREFIX){
 
-    var args = message.content.substring(1).split(" ");
+        var args = message.content.substring(1).split(" ");
+    
+        // `Cmd` definition
+        var cmd = args.shift();
+    
+        const command = client.commands.get(cmd);
+    
+        if (command) command.run(client, message, cmd, args, db);
+    
+        if (!command)
+        {
+            embed.setDescription(`
+            The command: \`${PREFIX}${cmd}\` is not recognised. 
+            
+            The prefix for this server is: \`${PREFIX}\`
+            For a list of commands, use \`${PREFIX}\`help`
+            );
+    
+            return message.channel.send(embed);
+        }
+    }else{//new message for sentiment analysis
+        newMessage(client, message, db);
 
-    // `Cmd` definition
-    var cmd = args.shift();
-
-    const command = client.commands.get(cmd);
-
-    if (command) command.run(client, message, cmd, args, db);
-
-    if (!command)
-    {
-        embed.setDescription(`
-        The command: \`${PREFIX}${cmd}\` is not recognised. 
-        
-        The prefix for this server is: \`${PREFIX}\`
-        For a list of commands, use \`${PREFIX}\`help`
-        );
-
-        return message.channel.send(embed);
     }
+
 });
 
 

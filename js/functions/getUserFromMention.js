@@ -1,4 +1,4 @@
-module.exports.run =  (client, mention) =>{
+module.exports =  function(client, mention){
 	if (!mention) return;
 
 	if (mention.startsWith('<@') && mention.endsWith('>')) {
