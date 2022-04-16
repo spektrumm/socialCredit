@@ -4,7 +4,7 @@ module.exports = function(streak, rawScore){
     // take in streak and score, and calculate weighted score based off pre-determined weight values
 
     if (streak <= 5 && streak >= -5){
-        streakWeight = multiplierWeight[Math.abs(streak)];
+        let streakWeight = multiplierWeight[Math.abs(streak)];
         if (streak <= 5 && streak >= 0){
             if (rawScore > 0){ // +ve streak, +ve msg
                 calcScore = (rawScore * streakWeight);
