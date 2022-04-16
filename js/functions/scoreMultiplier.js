@@ -1,28 +1,6 @@
-const getUserFromMention = require('.../functions/getUserFromMention.js');
 const multiplierWeight = require('.../multiplierWeights.json');
 
-function scoreFromDB(client, message, cmd, args, db){
-    let user = getUserFromMention.run(client, args[0]);
-    let userID = user.id;
-    let guildMember = message.guild.member(userID);
-    let displayName = guildMember.displayName;
-
-    let sql = `SELECT score FROM users WHERE userId = ${userID}`;
-    scoreGet = db.query(sql, function(err, result, fields) {
-        if(err){
-            throw err
-        }
-        let score = result[0].score;
-        return score; /*
-        not sure if i need to have let score inside the function and return it...
-        or if i can have it outside the db.query (sql, function()
-        */
-    });
-
-    return scoreGet;
-}
-
-function scoreMultiplier(streak, rawScore){
+module.exports = function(streak, rawScore){
     // take in streak and score, and calculate weighted score based off pre-determined weight values
 
     if (streak <= 5 && streak >= -5){
@@ -86,5 +64,5 @@ function scoreMultiplier(streak, rawScore){
             }
         }
     }
-    return calcScore, newStreak;
+    return [calcScore, newStreak];
 }
