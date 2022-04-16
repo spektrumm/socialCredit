@@ -20,7 +20,7 @@ module.exports.run = async (client, message, cmd, args, db) => { // why do we ne
 
     */
 
-    userScore = scoreFromDB(client, message, args, db);
+    userScore = scoreFromDB(client, message, cmd, args, db);
     message.channel.send(`<@${userId}>'s Social Credit is ${userScore}.`);
     
 };

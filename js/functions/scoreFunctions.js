@@ -1,7 +1,7 @@
 const getUserFromMention = require('.../functions/getUserFromMention.js');
 const multiplierWeight = require('.../multiplierWeights.json');
 
-function scoreFromDB(client, message, args, db){
+function scoreFromDB(client, message, cmd, args, db){
     let user = getUserFromMention.run(client, args[0]);
     let userID = user.id;
     let guildMember = message.guild.member(userID);
