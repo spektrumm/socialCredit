@@ -31,7 +31,7 @@ allChannels = os.listdir(path=dir)
 channelIndex = 0
 totalCount = 0
 scoresDict = {}
-messageHistory = {}
+messageHistory = []
 
 # loop through the files in the directory of all channel messages files
 for channelFiles in allChannels:
@@ -63,7 +63,7 @@ for channelFiles in allChannels:
                 # update a dictionary w message ID and it's respective score change as key value pair
                 tempDict = {'channelID': channelID, 'messageID': messageID,
                             'scoreChange': predictScore, 'authorID': userID}
-                messageHistory.update({totalCount: tempDict})
+                messageHistory.append(tempDict)
 
             else:
                 print('current msg content is empty, skipping...')
@@ -76,12 +76,12 @@ totalTime = toc - tic
 
 # output userID : totalScore pairs to a single file for us with bot
 with open('legacyScores.json', 'w') as jsonOut:
-    json.dump(scoresDict, jsonOut)
+    json.dump(scoresDict, jsonOut, indent=4)
     print('wrote scores dict to file')
 
 # output log of all processed messages (for referring individual acquired scores to their respective messages)
 with open('messageLog.json', 'w') as msgLogFile:
-    json.dump(messageHistory, msgLogFile)
+    json.dump(messageHistory, msgLogFile, indent=4, sort_keys=True)
     print('wrote message log dict to file')
 
 # process info

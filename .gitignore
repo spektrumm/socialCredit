@@ -9,3 +9,27 @@
 /.DS_Store
 /mysql/node_modules
 /mysql/package-lock.json
+
+# copy pasted from react auto .gitignore
+
+# dependencies
+/react/social-credit-website/node_modules
+/react/social-credit-website/.pnp
+.pnp.js
+
+# testing
+/react/social-credit-website/coverage
+
+# production
+/react/social-credit-website/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
