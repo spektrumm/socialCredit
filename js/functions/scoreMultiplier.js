@@ -1,4 +1,4 @@
-const multiplierWeight = require('.../multiplierWeights.json');
+const multiplierWeight = require('../../constants/multiplierWeights.json');
 
 module.exports = function(streak, rawScore){
     // take in streak and score, and calculate weighted score based off pre-determined weight values
