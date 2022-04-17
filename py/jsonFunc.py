@@ -33,11 +33,11 @@ def jsonDump(list):  # json.dump new data into an output json file, and move it 
                 'messageID': list[2],
                 'channelID': list[3]}
     tName = jsonData['messageID']
-    fileName = f'{tName}-out.json'
+    fileName = f'{tName}-js.json'
     with open(fileName, 'w') as out:
         json.dump(jsonData, out)
     if path.exists(fileName):
-        destPath = '/js/jsonOut'
+        destPath = '/msgIO/toJs'
         newLocation = shutil.move(fileName, destPath)
         print('The %s file has been moved to the location, %s' %
               (fileName, newLocation))

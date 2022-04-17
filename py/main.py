@@ -6,7 +6,7 @@ import time
 # initialize the flairNLP classifier
 sentAn = nlp.classifierInit()
 # set this variable to be where your incoming message files will be from
-dir = '/js/jsonIn'
+dir = '/msgIO/toPy'
 
 
 # main loop
