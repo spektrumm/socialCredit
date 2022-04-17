@@ -9,6 +9,7 @@
 /.DS_Store
 /mysql/node_modules
 /mysql/package-lock.json
+/msgIO
 
 # copy pasted from react auto .gitignore
 
