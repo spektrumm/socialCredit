@@ -6,7 +6,7 @@ module.exports = function (filePath, timeout, fs) {
 
         var timer = setTimeout(function () {
             watcher.close();
-            reject('File did not exists and was not created during the timeout.');
+            reject(false);
         }, timeout);
 
         fs.access(filePath, fs.constants.R_OK, function (err) {

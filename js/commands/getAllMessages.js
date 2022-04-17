@@ -1,10 +1,12 @@
 const Discord = require("discord.js");
 const fs = require('fs');
+const newMessage = require('../functions/newMessage.js');
 
 
 
 
-async function getAllChannelMessages(client, guildId, channelId){
+
+async function getAllChannelMessages(client, guildId, channelId, db){
     const guild = await client.guilds.fetch(guildId);
     const channel = guild.channels.cache.get(channelId);
     const messages = [];
@@ -15,33 +17,42 @@ async function getAllChannelMessages(client, guildId, channelId){
     while(message){
         await channel.messages.fetch({limit: 100, before: message.id})
             .then(messageFetch => {
-                messageFetch.forEach(msg => messages.push(msg));
-
+                setTimeout(() => {console.log('waiting')}, 1000);
+                messageFetch.forEach(msg => {
+                    if(!(msg.author.bot)){
+                        newMessage(client, msg, db);
+                    }
                 //updating pointer
+                })
                 message = 0 < messageFetch.size ? messageFetch.last() : null;
             })
-    }
-
-    let messagesJson = JSON.stringify(messages);
-
-    fs.writeFile('/mnt/d/repos/socialCredit/messageJsons/' + channel.name + '_messages.json', messagesJson, err => {
-        if(err){
-            console.error(err);
-            return;
         }
-    });
-    console.log('...done');
+
+    // let messagesJson = JSON.stringify(messages);
+
+    // fs.writeFile(`D:\\repos\\socialCredit\\legacyFiles\\getAllMsgs\\${channel.name}_messages.json`, messagesJson, err => {
+    //     if(err){
+    //         console.error(err);
+    //         return;
+    //     }
+    // });
+    // console.log('...done');
 };
 
 module.exports.run = async (client, message, cmd, args, db) => {
     let guildId = args;
     const guild = await client.guilds.fetch(guildId);
+    console.log('test');
     guild.channels.cache.forEach(channel => {
         if(channel.type === 'text'){ 
-            console.log('fetching - ' + channel.name);
-            getAllChannelMessages(client, guildId, channel.id);
+            if(channel.name != 'botspam'){
+
+                console.log('fetching - ' + channel.name);
+                getAllChannelMessages(client, guildId, channel.id, db);
+            }
         }
     });
+    console.log('AllDone');
 };
 
 module.exports.help = {

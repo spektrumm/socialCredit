@@ -1,6 +1,6 @@
 const multiplierWeight = require('../../constants/multiplierWeights.json');
 
-module.exports = function(streak, rawScore){
+module.exports = function(rawScore, streak){
     // take in streak and score, and calculate weighted score based off pre-determined weight values
     let calcScore;
     let newStreak;
@@ -8,10 +8,10 @@ module.exports = function(streak, rawScore){
     if (streak <= 5 && streak >= -5){
         let streakWeight = multiplierWeight[Math.abs(streak)];
     
-        if (streak <= 5 && streak >= 0){
+        if (streak <= 5 && streak > 0){
             if (rawScore > 0){ // +ve streak, +ve msg
-                calcScore = (rawScore * streakWeight);
-                newStreak = streak++;
+                calcScore = (rawScore * (1+(1-streakWeight)));
+                newStreak = ++streak;
             }
             else if (rawScore < 0){ // +ve streak, -ve msg
                 calcScore = (rawScore * streakWeight);
@@ -21,29 +21,41 @@ module.exports = function(streak, rawScore){
                 calcScore = (rawScore * streakWeight);
             }
         }
-        else if (streak >= -5 && streak <= 0){
+        else if (streak >= -5 && streak < 0){
             if (rawScore > 0){ // -ve streak, +ve msg
+
                 calcScore = (rawScore * streakWeight);
                 newStreak = 0;
             }
             else if (rawScore < 0){ // -ve streak, -ve msg
                 adjustedWeight = (1 + (1 - streakWeight));
-                calcScore = Math.pow(rawScore, adjustedWeight);
-                newStreak = streak--;
+                calcScore = Math.pow(Math.abs(rawScore), adjustedWeight);
+                calcScore = calcScore * -1;
+                newStreak = --streak;
             }
             else{ // -ve streak, neutral msg
                 calcScore = (rawScore * streakWeight);
             }
+        }else{
+            if(rawScore < 0){
+                calcScore = rawScore;
+                newStreak = --streak;
+            }else{
+                calcScore = rawScore;
+                newStreak = ++streak;
+            }
         }
     }
     else{
+
         if (streak > 5){
             if (rawScore > 0){
                 calcScore = Math.pow(rawScore, 1.25)
-                newStreak = streak++;
+                newStreak = ++streak;
             }
             else if (rawScore < 0){
-                calcScore = Math.pow(rawScore, 0.5)
+                calcScore = Math.pow(Math.abs(rawScore), 0.5)
+                calcScore = calcScore *-1;
                 newStreak = 0;
             }
             else{
@@ -56,12 +68,14 @@ module.exports = function(streak, rawScore){
             }
             else if (rawScore < 0){
                 calcScore = Math.pow(rawScore, 2);
-                newStreak = streak--;
+                calcScore = calcScore *-1;
+                newStreak = --streak;
             }
             else {
                 calcScore = rawScore;
             }
         }
     }
+
     return [calcScore, newStreak];
 }

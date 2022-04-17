@@ -6,18 +6,19 @@ import time
 # initialize the flairNLP classifier
 sentAn = nlp.classifierInit()
 # set this variable to be where your incoming message files will be from
-dir = '/msgIO/toPy'
+dir = 'D:\\repos\\socialCredit\\msgIO\\toPy'
 
 
 # main loop
 while True:
     if len(listdir(path=dir)) != 0:  # check if the directory is not empty
         print('new file found')  # debug
+        time.sleep(1);
         data = h.prepData(dir)
 
         predictScore = nlp.flairPrediction(data[0], sentAn)
         data[0] = predictScore
-        inFile = f'{data[2]}-in.json'
+        inFile = f'{data[2]}-py.json'
 
         h.fileIO(data, inFile)
     else:

@@ -81,12 +81,10 @@ app.get('/loadUsers', (req,res) =>{
         let name = user.name;
         let score = user.score;
         let multiplier = user.multiplier;
-        let lastMessageNegative = user.lastMessageNegative;
-        let lastMessagePositive = user.lastMessagePositive;
-        post.push([userId, name, score, multiplier, 0]);
+        post.push([userId, name, score, multiplier, 0, 0]);
 
     })
-    let sql = "INSERT INTO users (userId, name, score, multiplier, messageStreak) VALUES ?";
+    let sql = "INSERT INTO users (userId, name, score, multiplier, messageStreak, rank) VALUES ?";
 
     console.log(post);
 

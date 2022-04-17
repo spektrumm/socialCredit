@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const fs = require('fs');
 const mysql = require('mysql');
 const newMessage = require('./functions/newMessage.js');
+const newMessageBulk = require('./functions/newMessageBulk.js');
 
 
 
@@ -89,7 +90,12 @@ client.on('message', message =>
             return message.channel.send(embed);
         }
     }else{//new message for sentiment analysis
-        newMessage(client, message, db);
+        // if(message.content == 'BULK'){
+        //     const file = require('../legacyFiles/messageLog-updatedRUN2.json');
+        //     newMessageBulk(client, file, db)
+
+        // }
+        //newMessage(client, message, db);
 
     }
 

@@ -2,6 +2,7 @@
 /js/package-lock.json
 /messageJsons
 /py/__pycache__
+/py/__pycache__/nlpFunc.cpython-310.pyc
 /.vscode
 /tempJson
 /legacyFiles
