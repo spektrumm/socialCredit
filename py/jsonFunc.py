@@ -1,6 +1,8 @@
 import json
 import shutil
 from os import path, remove, listdir
+import removeURL as url
+# various file IO functions regarding the use of relevant json files and their directories
 
 
 def getDir(directory):  # get a selected file from the provided directory
@@ -18,12 +20,15 @@ def parseJson(fileName, directory):  # move the selected file and parse it for s
               (sourcePath, newLocation))
     with open(fileName, 'r', encoding='utf-8') as jsonFile:
         data = json.load(jsonFile)
-
-        msgContent = data['content']
         userID = data['authorID']
         messageID = data['id']
         channelID = data['channelID']
-        outList = [msgContent, userID, messageID, channelID]
+        msgContent = data['cleanContent']
+        if (data['embeds']) == [None]:
+            outList = [msgContent, userID, messageID, channelID]
+        else:
+            truncStr = url.findURL(msgContent)
+            outList = [truncStr, userID, messageID, channelID]
     return outList
 
 

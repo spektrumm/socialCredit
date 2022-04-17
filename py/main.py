@@ -15,8 +15,11 @@ while True:
         print('new file found')  # debug
         time.sleep(1);
         data = h.prepData(dir)
+        if data[0] == '':
+            predictScore = 0
+        else:
+            predictScore = nlp.flairPrediction(data[0], sentAn)
 
-        predictScore = nlp.flairPrediction(data[0], sentAn)
         data[0] = predictScore
         inFile = f'{data[2]}-py.json'
 

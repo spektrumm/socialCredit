@@ -3,6 +3,7 @@ import json
 import os
 import shutil
 import timeit
+import removeURL as url
 # this will be a standalone script for processing previously sent messages in bulk.
 
 
@@ -43,12 +44,25 @@ for channelFiles in allChannels:
         for messages in jsonData:
             currentMsg = jsonData[msgCount]
             msgCount += 1
-            msgCon = currentMsg['content']
+            rawContent = currentMsg['cleanContent']
+            if '\u200b' in rawContent:
+                msgCon = rawContent.replace('\u200b', '')
+            else:
+                msgCon = rawContent
+                print('no strange @ representation present')
+
             messageID = currentMsg['id']
             userID = currentMsg['authorID']
             channelID = currentMsg['channelID']
+            timeStamp = currentMsg['createdTimestamp']
+            if currentMsg['embeds'] == []:
+                print('embeds key is empty, no link is present in the message.')
+                msgStr = msgCon
+            else:
+                msgStr = url.findURL(msgCon)
+                print(f'url found in msg #{messageID}, removing url.')
 
-            if msgCon != '':  # check if the content of the selected message is not empty
+            if msgStr != '':  # check if the content of the selected message is not empty
 
                 # do sentiment analysis on msgCon
                 predictScore = nlp.flairPrediction(msgCon, sentAn)
@@ -62,7 +76,7 @@ for channelFiles in allChannels:
                 totalCount += 1
                 # update a dictionary w message ID and it's respective score change as key value pair
                 tempDict = {'channelID': channelID, 'messageID': messageID,
-                            'scoreChange': predictScore, 'authorID': userID}
+                            'scoreChange': predictScore, 'authorID': userID, 'content': msgStr, 'timestamp': timeStamp}
                 messageHistory.append(tempDict)
 
             else:

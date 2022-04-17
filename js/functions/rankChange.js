@@ -1,1 +1,5 @@
-module.exports = function(oldScore, effectiveScore)
+const rankThresh = require('../../constants/rankThreshholds.json');
+
+module.exports = function(oldScore, effectiveScore, currRank) {
+    
+}
