@@ -6,14 +6,10 @@ def siaInit():
     return sia
 
 
-sentAn = siaInit()
-
-print(sentAn.polarity_scores(
-    ""))
-
-
 def vaderPredict(str, analyzer):
     score = analyzer.polarity_scores(str)
+    rawScore = score['compound']
+    calcScore = rawScore * 100
+    print(f'raw score is {rawScore}')
 
-    if score['pos'] != 0.0:
-        return score['pos']
+    return calcScore
