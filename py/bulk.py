@@ -44,11 +44,18 @@ for channelFiles in allChannels:
         for messages in jsonData:
             currentMsg = jsonData[msgCount]
             msgCount += 1
-            msgCon = currentMsg['cleanContent']
+            rawContent = currentMsg['cleanContent']
+            if '\u200b' in rawContent:
+                msgCon = rawContent.replace('\u200b', '')
+            else:
+                msgCon = rawContent
+                print('no strange @ representation present')
+
             messageID = currentMsg['id']
             userID = currentMsg['authorID']
             channelID = currentMsg['channelID']
-            if currentMsg['embeds'] == [None]:
+            timeStamp = currentMsg['createdTimestamp']
+            if currentMsg['embeds'] == []:
                 print('embeds key is empty, no link is present in the message.')
                 msgStr = msgCon
             else:
@@ -69,7 +76,7 @@ for channelFiles in allChannels:
                 totalCount += 1
                 # update a dictionary w message ID and it's respective score change as key value pair
                 tempDict = {'channelID': channelID, 'messageID': messageID,
-                            'scoreChange': predictScore, 'authorID': userID}
+                            'scoreChange': predictScore, 'authorID': userID, 'content': msgStr, 'timestamp': timeStamp}
                 messageHistory.append(tempDict)
 
             else:

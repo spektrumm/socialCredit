@@ -23,8 +23,8 @@ def parseJson(fileName, directory):  # move the selected file and parse it for s
         userID = data['authorID']
         messageID = data['id']
         channelID = data['channelID']
+        msgContent = data['cleanContent']
         if (data['embeds']) == [None]:
-            msgContent = data['cleanContent']
             outList = [msgContent, userID, messageID, channelID]
         else:
             truncStr = url.findURL(msgContent)
