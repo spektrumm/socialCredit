@@ -3,6 +3,7 @@ const fs = require('fs');
 const mysql = require('mysql');
 const newMessage = require('./functions/newMessage.js');
 const newMessageBulk = require('./functions/newMessageBulk.js');
+const {performance}  = require('perf_hooks');
 
 
 
@@ -75,8 +76,12 @@ client.on('message', message =>
         var cmd = args.shift();
     
         const command = client.commands.get(cmd);
-    
+        let allStartTime = performance.now();
         if (command) command.run(client, message, cmd, args, db);
+        let allEndTime = performance.now();
+
+        console.log('FULL TIME RUNNING ====================', allEndTime - allStartTime);
+
     
         if (!command)
         {

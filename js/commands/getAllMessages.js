@@ -1,6 +1,7 @@
 const Discord = require("discord.js");
 const fs = require('fs');
 const newMessage = require('../functions/newMessage.js');
+const {performance}  = require('perf_hooks');
 
 
 
@@ -15,11 +16,14 @@ async function getAllChannelMessages(client, guildId, channelId, db){
     messages.push(message);
 
     while(message){
-        await channel.messages.fetch({limit: 1, before: message.id})
+        await channel.messages.fetch({limit: 5, before: message.id})
             .then(messageFetch => {
                 messageFetch.forEach(msg => {
                     if(!(msg.author.bot)){
+                        let startTime = performance.now();
                         newMessage(client, msg, db)
+                        let endTime = performance.now();
+                        console.log(endTime-startTime);
                     }
                 //updating pointer
                 })

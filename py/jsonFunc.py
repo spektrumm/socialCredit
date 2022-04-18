@@ -7,7 +7,7 @@ import removeURL as url
 
 def getDir(directory):  # get a selected file from the provided directory
     dirArray = listdir(path=directory)
-    selectedFile = dirArray[0]
+    selectedFile = dirArray[-1]
     return selectedFile
 
 
@@ -16,10 +16,19 @@ def parseJson(fileName, directory):  # move the selected file and parse it for s
     if path.exists(sourcePath):
         destPath = fileName
         newLocation = shutil.move(sourcePath, destPath)
-        print('The incoming %s file has been moved to the root directory %s' %
-              (sourcePath, newLocation))
-    with open(fileName, 'r', encoding='utf-8') as jsonFile:
-        data = json.load(jsonFile)
+        #print('The incoming %s file has been moved to the root directory %s' %
+        #      (sourcePath, newLocation))
+    try: 
+        jsonFile = open(fileName, 'r', encoding='utf-8')
+    except OSError:
+        print("Could not open file:", fileName)
+        return False
+    with jsonFile:
+        try:
+            data = json.load(jsonFile)
+        except json.decoder.JSONDecodeError:
+            print("Could not load file:", fileName)
+            return False
         userID = data['authorID']
         messageID = data['id']
         channelID = data['channelID']
@@ -44,8 +53,8 @@ def jsonDump(list):  # json.dump new data into an output json file, and move it 
     if path.exists(fileName):
         destPath = 'D:\\repos\\socialCredit\\msgIO\\toJs'
         newLocation = shutil.move(fileName, destPath)
-        print('The %s file has been moved to the location, %s' %
-              (fileName, newLocation))
+        #print('The %s file has been moved to the location, %s' %
+        #      (fileName, newLocation))
 
 
 def deleteFile(fileName):  # take temp input file and delete it to remove directory clutter

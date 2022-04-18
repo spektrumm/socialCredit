@@ -24,7 +24,7 @@ module.exports = async function (client, message, db){
     });
     let fileExists;
     //receive file
-    await checkForFileExistence(fileReceive, 1000000, fs).then(result => {
+    await checkForFileExistence(fileReceive, 10000000, fs).then(result => {
         fileExists = result;
     }).catch(err =>{
         fileExists = err;
@@ -36,6 +36,14 @@ module.exports = async function (client, message, db){
         throw("exit");
     }else{
         sentimentAnalysisObj = require(fileReceive);
+        fs.unlink(fileReceive, function (err) {
+            if (err) {
+              console.error(err);
+            } else {
+              //console.log("File removed:", fileReceive);
+            }
+          });
+
     }
     //check if user exists
     //let userExists;
@@ -81,7 +89,7 @@ module.exports = async function (client, message, db){
     //console.log('test');
     
     let content = message.cleanContent.replaceAll("\n", "").replaceAll('"', "'").replaceAll("`", "'");
-    console.log(content);
+    //console.log(content);
     let timestamp = message.createdTimestamp;
     //console.log(sentimentAnalysisObj);
     let rawScoreChange = parseInt(sentimentAnalysisObj.score);
@@ -119,8 +127,8 @@ module.exports = async function (client, message, db){
     
     try{
     let updateScoreSql = `UPDATE users SET score = ${newScore}, rank = ${rank}, messageStreak = ${newMessageStreak} WHERE userId = ${userId}`;
-        await dbQuery(db, updateScoreSql, [newScore, rank, newMessageStreak, userId]);
-        await dbQuery(db, addMessageSql, [messageId, userId, channelId, content, rawScoreChange, effectiveScoreChange, newScore, timestamp]);
+        dbQuery(db, updateScoreSql, [newScore, rank, newMessageStreak, userId]);
+        dbQuery(db, addMessageSql, [messageId, userId, channelId, content, rawScoreChange, effectiveScoreChange, newScore, timestamp]);
         
     }catch(err){
         throw err;
