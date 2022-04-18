@@ -15,12 +15,11 @@ async function getAllChannelMessages(client, guildId, channelId, db){
     messages.push(message);
 
     while(message){
-        await channel.messages.fetch({limit: 100, before: message.id})
+        await channel.messages.fetch({limit: 1, before: message.id})
             .then(messageFetch => {
-                setTimeout(() => {console.log('waiting')}, 1000);
                 messageFetch.forEach(msg => {
                     if(!(msg.author.bot)){
-                        newMessage(client, msg, db);
+                        newMessage(client, msg, db)
                     }
                 //updating pointer
                 })

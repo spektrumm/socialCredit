@@ -13,7 +13,7 @@ dir = 'D:\\repos\\socialCredit\\msgIO\\toPy'
 while True:
     if len(listdir(path=dir)) != 0:  # check if the directory is not empty
         print('new file found')  # debug
-        time.sleep(1);
+        time.sleep(0.1);
         data = h.prepData(dir)
         if data[0] == '':
             predictScore = 0
