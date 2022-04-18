@@ -8,7 +8,8 @@ def prepData(directory):  # calls 2 separate json operation functions from the f
     return data
 
 
-def fileIO(list, msgFile):  # calls the last 2 json operation functions required for dealing with outgoing messages
-    fn.jsonDump(list)
+# calls the last 2 json operation functions required for dealing with outgoing messages
+def fileIO(list, msgFile, directory):
+    fn.jsonDump(list, directory)
 
-    fn.deleteFile(msgFile)
+    # fn.deleteFile(msgFile)

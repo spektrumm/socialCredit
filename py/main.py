@@ -12,14 +12,15 @@ import jsonFunc as fn
 sentAn = vader.siaInit()
 # set this variable to be where your incoming message files will be from
 dir = 'D:\\repos\\socialCredit\\msgIO\\toPy'
+dir2 = 'D:\\repos\\socialCredit\\msgIO\\toJs'
 
 failedFileCounter = 0
 
 # main loop
 while True:
     if len(listdir(path=dir)) != 0:  # check if the directory is not empty
-        #print('new file found')  # debug
-        time.sleep(0.1);
+        # print('new file found')  # debug
+        time.sleep(0.1)
         data = h.prepData(dir)
         if data == False:
             fn.deleteFile(inFile)
@@ -34,7 +35,7 @@ while True:
         data[0] = predictScore
         inFile = f'{data[2]}-py.json'
 
-        h.fileIO(data, inFile)
+        h.fileIO(data, inFile, dir2)
     else:
         print('no new files... sleeping')
         time.sleep(1)
