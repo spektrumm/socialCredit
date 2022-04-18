@@ -4,12 +4,14 @@ import os
 import shutil
 import timeit
 import removeURL as url
+import nltkFunc as vader
 # this will be a standalone script for processing previously sent messages in bulk.
 
 
 # start of script inits
 tic = timeit.default_timer()
-sentAn = nlp.classifierInit()
+#sentAn = nlp.classifierInit()
+sentAn = vader.siaInit()
 dir = 'messageJsons'
 
 
@@ -65,7 +67,8 @@ for channelFiles in allChannels:
             if msgStr != '':  # check if the content of the selected message is not empty
 
                 # do sentiment analysis on msgCon
-                predictScore = nlp.flairPrediction(msgCon, sentAn)
+                #predictScore = nlp.flairPrediction(msgStr, sentAn)
+                predictScore = vader.vaderPredict(msgStr, sentAn)
                 # take sentAn score and append to dict keyed to userID
                 if userID in scoresDict:
                     oldScore = scoresDict[userID]

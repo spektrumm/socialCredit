@@ -1,10 +1,13 @@
+import sre_constants
 import nlpFunc as nlp
 import helper as h
 from os import listdir
 import time
+import nltkFunc as vader
 
 # initialize the flairNLP classifier
-sentAn = nlp.classifierInit()
+#sentAn = nlp.classifierInit()
+sentAn = vader.siaInit()
 # set this variable to be where your incoming message files will be from
 dir = 'D:\\repos\\socialCredit\\msgIO\\toPy'
 
@@ -18,7 +21,8 @@ while True:
         if data[0] == '':
             predictScore = 0
         else:
-            predictScore = nlp.flairPrediction(data[0], sentAn)
+            #predictScore = nlp.flairPrediction(data[0], sentAn)
+            predictScore = vader.vaderPredict(data[0], sentAn)
 
         data[0] = predictScore
         inFile = f'{data[2]}-py.json'
