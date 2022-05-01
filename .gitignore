@@ -15,15 +15,15 @@
 # copy pasted from react auto .gitignore
 
 # dependencies
-/react/social-credit-website/node_modules
-/react/social-credit-website/.pnp
+/react/social-credit-app/node_modules
+/react/social-credit-app/.pnp
 .pnp.js
 
 # testing
-/react/social-credit-website/coverage
+/react/social-credit-app/coverage
 
 # production
-/react/social-credit-website/build
+/react/social-credit-app/build
 
 # misc
 .DS_Store

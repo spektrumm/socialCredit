@@ -4,6 +4,8 @@ const mysql = require('mysql');
 const newMessage = require('./functions/newMessage.js');
 const newMessageBulk = require('./functions/newMessageBulk.js');
 const {performance}  = require('perf_hooks');
+const vader = require('vader-sentiment');
+
 
 
 
@@ -77,7 +79,7 @@ client.on('message', message =>
     
         const command = client.commands.get(cmd);
         let allStartTime = performance.now();
-        if (command) command.run(client, message, cmd, args, db);
+        if (command) command.run(client, message, cmd, args, db, vader);
         let allEndTime = performance.now();
 
         console.log('FULL TIME RUNNING ====================', allEndTime - allStartTime);

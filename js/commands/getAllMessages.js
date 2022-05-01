@@ -7,7 +7,7 @@ const {performance}  = require('perf_hooks');
 
 
 
-async function getAllChannelMessages(client, guildId, channelId, db){
+async function getAllChannelMessages(client, guildId, channelId, db, vader){
     const guild = await client.guilds.fetch(guildId);
     const channel = guild.channels.cache.get(channelId);
     const messages = [];
@@ -16,14 +16,14 @@ async function getAllChannelMessages(client, guildId, channelId, db){
     messages.push(message);
 
     while(message){
-        await channel.messages.fetch({limit: 5, before: message.id})
+        await channel.messages.fetch({limit: 100, before: message.id})
             .then(messageFetch => {
                 messageFetch.forEach(msg => {
                     if(!(msg.author.bot)){
-                        let startTime = performance.now();
-                        newMessage(client, msg, db)
-                        let endTime = performance.now();
-                        console.log(endTime-startTime);
+                        //let startTime = performance.now();
+                        newMessage(client, msg, db, vader)
+                        //let endTime = performance.now();
+                        //console.log(endTime-startTime);
                     }
                 //updating pointer
                 })
@@ -42,7 +42,7 @@ async function getAllChannelMessages(client, guildId, channelId, db){
     // console.log('...done');
 };
 
-module.exports.run = async (client, message, cmd, args, db) => {
+module.exports.run = async (client, message, cmd, args, db, vader) => {
     let guildId = args;
     const guild = await client.guilds.fetch(guildId);
     console.log('test');
@@ -51,7 +51,7 @@ module.exports.run = async (client, message, cmd, args, db) => {
             if(channel.name != 'botspam'){
 
                 console.log('fetching - ' + channel.name);
-                getAllChannelMessages(client, guildId, channel.id, db);
+                getAllChannelMessages(client, guildId, channel.id, db, vader);
             }
         }
     });

@@ -3,7 +3,7 @@ const checkForFileExistence = require('./checkForFileExistence.js');
 const dbQuery = require('./dbQuery.js');
 const calculateEffectiveScore = require('./calculateEffectiveScore.js');
 
-module.exports = async function (client, message, db){
+module.exports = async function (client, message, db, vader){
     //async function newMessage(client, message, db){
         
     let userId = message.author.id;
@@ -13,38 +13,40 @@ module.exports = async function (client, message, db){
     let fileSend = `D:\\repos\\socialCredit\\msgIO\\toPy\\${messageId}-py.json`;
     let fileReceive = `D:\\repos\\socialCredit\\msgIO\\toJs\\${messageId}-js.json`;
 
-    //sendfile
-    messageJson = JSON.stringify(message);
+    // //sendfile
+    // messageJson = JSON.stringify(message);
     
-    fs.writeFile(fileSend, messageJson, err => {
-        if(err){
-            console.log(`${err} - ${messageId}`)
-            return;
-        }
-    });
-    let fileExists;
-    //receive file
-    await checkForFileExistence(fileReceive, 10000000, fs).then(result => {
-        fileExists = result;
-    }).catch(err =>{
-        fileExists = err;
-    })
-    let sentimentAnalysisObj;
+    // fs.writeFile(fileSend, messageJson, err => {
+    //     if(err){
+    //         console.log(`${err} - ${messageId}`)
+    //         return;
+    //     }
+    // });
+    // let fileExists;
+    // //receive file
+    // await checkForFileExistence(fileReceive, 10000000, fs).then(result => {
+    //     fileExists = result;
+    // }).catch(err =>{
+    //     fileExists = err;
+    // })
+    // let sentimentAnalysisObj;
 
-    if(fileExists === false){
-        console.log('File did not exists and was not created during the timeout.');
-        throw("exit");
-    }else{
-        sentimentAnalysisObj = require(fileReceive);
-        fs.unlink(fileReceive, function (err) {
-            if (err) {
-              console.error(err);
-            } else {
-              //console.log("File removed:", fileReceive);
-            }
-          });
+    // if(fileExists === false){
+    //     console.log('File did not exists and was not created during the timeout.');
+    //     throw("exit");
+    // }else{
+    //     sentimentAnalysisObj = require(fileReceive);
+    //     fs.unlink(fileReceive, function (err) {
+    //         if (err) {
+    //           console.error(err);
+    //         } else {
+    //           //console.log("File removed:", fileReceive);
+    //         }
+    //       });
 
-    }
+    // }
+
+
     //check if user exists
     //let userExists;
     let insertSql = `INSERT IGNORE INTO users (userId, name, score, messageStreak, rank) VALUES (?,?, '0', '0', '0')`;
@@ -92,7 +94,10 @@ module.exports = async function (client, message, db){
     //console.log(content);
     let timestamp = message.createdTimestamp;
     //console.log(sentimentAnalysisObj);
-    let rawScoreChange = parseInt(sentimentAnalysisObj.score);
+    
+    let rawScoreChange = vader.SentimentIntensityAnalyzer.polarity_scores(content).compound*100;
+    
+    //let rawScoreChange = parseInt(sentimentAnalysisObj.score);
     //console.log('rawScoreChange -- ', rawScoreChange);
 
     let effectiveScoreChange;
