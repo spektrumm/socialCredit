@@ -7,10 +7,6 @@ import Title from "../components/mainScreen/title";
 const mainScreen = () => {
   return (
     <div style={{ alignItems: "center", justifyContent: "center" }}>
-      <div style={styles.header}>
-        <Title />
-        <SearchBar />
-      </div>
       <div style={styles.leaderboards}>
         <LeaderboardTop />
         <LeaderboardBottom />
@@ -20,11 +16,6 @@ const mainScreen = () => {
 };
 
 const styles = {
-  header: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
   leaderboards: {
     display: "flex",
     flexDirection: "row",

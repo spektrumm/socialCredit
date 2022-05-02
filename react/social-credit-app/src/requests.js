@@ -12,4 +12,16 @@ const GetBottomUsers = () => {
     .then((res) => res.data);
 };
 
-export { GetTopUsers, GetBottomUsers };
+const GetUsersByName = (userName) => {
+  return axios
+    .get(`http://localhost:8080/data/getUsers/` + userName)
+    .then((res) => res.data);
+};
+
+const GetUserDataByName = (userName) => {
+  return axios
+    .get(`http://localhost:8080/data/getUserData/` + userName)
+    .then((res) => res.data);
+};
+
+export { GetTopUsers, GetBottomUsers, GetUsersByName, GetUserDataByName };

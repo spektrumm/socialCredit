@@ -10,7 +10,7 @@ export const Title = () => {
           fontWeight: "bold",
           fontSize: 60,
           color: "white",
-          paddingLeft: width / 2 - 190,
+          paddingLeft: width / 2 - 170,
         }}
       >
         Social Credit
