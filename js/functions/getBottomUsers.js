@@ -1,5 +1,6 @@
 const dbQuery = require("./dbQuery");
 
+//get 10 users with the lowest score + reformat data for leaderboard
 module.exports = async function (db) {
   let sql = `SELECT name, score FROM users ORDER BY score ASC LIMIT 10`;
   let usersReformat = [];

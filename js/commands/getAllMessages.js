@@ -1,15 +1,9 @@
-const Discord = require("discord.js");
-const fs = require("fs");
-const newMessage = require("../functions/newMessage.js");
 const { performance } = require("perf_hooks");
 const newMessageBulk = require("../functions/newMessageBulk");
-const { measureMemory } = require("vm");
 const dbQuery = require("../functions/dbQuery.js");
-const { syncBuiltinESMExports } = require("module");
 
-const getAllChannelMessages = async (client, guildId, channelId, db, vader) => {
-  const guild = await client.guilds.fetch(guildId);
-  const channel = guild.channels.cache.get(channelId);
+//retuns all messages for a specific channelId
+const getAllChannelMessages = async (client, guild, channel, db, vader) => {
   const messages = [];
   let message = await channel.messages
     .fetch({ limit: 1 })
@@ -30,29 +24,18 @@ const getAllChannelMessages = async (client, guildId, channelId, db, vader) => {
             if (msg !== null) {
               messages.push(msg);
             }
-            //newMessage(client, msg, db, vader)
             //let endTime = performance.now();
             //console.log(endTime-startTime);
           }
-          //updating pointer
         });
+        //updating pointer
         message = 0 < messageFetch.size ? messageFetch.last() : null;
       });
   }
-  //console.log(messages);
   return messages;
-
-  // let messagesJson = JSON.stringify(messages);
-
-  // fs.writeFile(`D:\\repos\\socialCredit\\legacyFiles\\getAllMsgs\\${channel.name}_messages.json`, messagesJson, err => {
-  //     if(err){
-  //         console.error(err);
-  //         return;
-  //     }
-  // });
-  // console.log('...done');
 };
 
+//calls getAllChannelMessages for all channels in guildId
 const getAllMessages = async (client, message, cmd, args, db, vader) => {
   let messages = [];
   let guildId = args;
@@ -64,38 +47,41 @@ const getAllMessages = async (client, message, cmd, args, db, vader) => {
           console.log("fetching - " + channel.name);
           await getAllChannelMessages(
             client,
-            guildId,
-            channel.id,
+            guild,
+            channel,
             db,
             vader
           ).then((msg) => {
-            messages.push(msg);
+            messages = message.concat(msg)
+            // messages.push(msg);
           });
         }
       }
     })
   );
-  let concatted = [];
-  messages.forEach((channel) => {
-    concatted = concatted.concat(channel);
-  });
-  concatted.sort(GetSortOrder("createdTimestamp"));
-  return concatted;
+  // let concatted = [];
+  // messages.forEach((channel) => {
+  //   concatted = concatted.concat(channel);
+  // });
+  // concatted.sort(GetSortOrder("createdTimestamp"));
+  // return concatted;
+  //sort messages based on timestamp
+  messages.sort(getSortOrder("createdTimestamp"));
+  return messages;
 };
 
+//run sentiment analysis on getAllMessages and calculate weighted scores,
+//add all data to db
 module.exports.run = async (client, message, cmd, args, db, vader) => {
   let startTime = performance.now();
   let users = [];
   let messages = [];
   await getAllMessages(client, message, cmd, args, db, vader).then((msg) => {
     msg.forEach((message) => {
-      //if (message !== null) {
       let result = newMessageBulk(client, message, db, vader, users);
       messages.push(result.messageObj);
       users = result.users;
-      // }
     });
-    // console.log(users);
   });
   await Promise.all(
     users.map(async (user) => {
@@ -136,8 +122,8 @@ module.exports.run = async (client, message, cmd, args, db, vader) => {
   console.log((endTime - startTime) / 1000);
 };
 
-//Comparer Function
-const GetSortOrder = (prop) => {
+//Comparer Function for sorting
+const getSortOrder = (prop) => {
   return function (a, b) {
     if (a[prop] > b[prop]) {
       return 1;

@@ -1,5 +1,7 @@
 const dbQuery = require("./dbQuery.js");
 const calculateEffectiveScore = require("./calculateEffectiveScore.js");
+
+//run sentiment analysis on message and update users array with result
 module.exports = (client, message, db, vader, users) => {
   let userId = message.author.id;
   let messageId = message.id;
@@ -23,15 +25,7 @@ module.exports = (client, message, db, vader, users) => {
     currentScore = 0;
     messageStreak = 0;
     rank = 0;
-    // users.push({
-    //   id: userId,
-    //   name: name,
-    //   score: 0,
-    //   messageStreak: 0,
-    //   rank: 0,
-    // });
   }
-
   let content = message.cleanContent
     .replaceAll("\n", "")
     .replaceAll('"', "'")

@@ -1,5 +1,6 @@
 const dbQuery = require("./dbQuery");
 
+//fetch a list of 5 users with a name that contains a substring userName
 module.exports = async function (userName, db) {
   let sql = `SELECT name FROM users WHERE name LIKE ? ORDER BY name ASC LIMIT 5 `;
   let usersReformat = [];

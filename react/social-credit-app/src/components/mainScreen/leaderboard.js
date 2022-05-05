@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Table } from "reactstrap";
 import { GetBottomUsers, GetTopUsers } from "../../requests";
 
+//returns a leaderboard html
 export const Leaderboard = (top) => {
   const [users, setUsers] = useState([]);
-
   useEffect(() => {
+    //initial top/bottom user data fetch + update every 5 second interval
     let requestData;
     if (top.top == true) {
       requestData = GetTopUsers();
@@ -28,7 +29,6 @@ export const Leaderboard = (top) => {
   }, []);
 
   if (users !== undefined) {
-    //console.log(users);
     return (
       <div
         style={{

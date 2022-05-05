@@ -5,6 +5,7 @@ import { Chart as ChartJS } from "chart.js/auto";
 import "chartjs-adapter-moment";
 import useWindowDimensions from "../useWindowsDimentions";
 
+//user score vs timestamp graph 
 const Chart = (userName) => {
   const { height, width } = useWindowDimensions();
 
