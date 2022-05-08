@@ -1,46 +1,77 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { GetUserDataByName } from "../../requests";
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS } from "chart.js/auto";
 import "chartjs-adapter-moment";
 import useWindowDimensions from "../useWindowsDimentions";
 
-//user score vs timestamp graph 
-const Chart = (userName) => {
-  const { height, width } = useWindowDimensions();
+const getGradient = (chart) => {
+  const chartBottom = chart.chartArea.bottom;
+  const chartTop = chart.chartArea.top;
+  const chartHeight = chartBottom - chartTop;
+  const pointZero = chart.scales.y.getPixelForValue(0);
+  const pointZeroHeight = pointZero - chartTop;
+  const pointZeroPercentage = pointZeroHeight / chartHeight;
 
-  const [user, setUser] = useState([]);
+  const gradient = chart.ctx.createLinearGradient(
+    0,
+    chartTop,
+    0,
+    chartHeight + chartTop
+  );
+  gradient.addColorStop(0, "rgba(10,10,58, 1)");
+  gradient.addColorStop(pointZeroPercentage, "rgba(34,96,122,0.5)");
+  gradient.addColorStop(pointZeroPercentage, "rgba(34,96,122,0.5)");
+  gradient.addColorStop(1, "rgba(10,10,58, 1)");
+  return gradient;
+};
+
+const Chart = (user) => {
+  // console.log(user.userName);
+  const { height, width } = useWindowDimensions();
+  const [userData, setUserData] = useState(undefined);
+  const [bgColor, setBgColor] = useState("rgba(34,96,122,0.5)");
+
+  const chartRef = useRef(null);
   useEffect(() => {
-    GetUserDataByName(userName.userName).then((result) => {
-      setUser(result);
+    GetUserDataByName(user.userName).then((result) => {
+      setUserData(result);
+      //);
     });
+    const bgInterval = setInterval(() => {
+      const chart = chartRef.current;
+      if (chart !== null) {
+        setBgColor(getGradient(chart));
+        clearInterval(bgInterval);
+      }
+    }, 1);
 
     setInterval(() => {
-      GetUserDataByName(userName.userName).then((result) => {
+      GetUserDataByName(user.userName).then((result) => {
         let userData = result;
-        setUser(userData);
+        setUserData(userData);
       });
     }, 5000);
   }, []);
 
-  if (user !== undefined) {
+  if (userData !== undefined) {
     let messageData = [];
 
-    user.forEach((message, index) => {
+    userData.forEach((message, index) => {
       let timestamp = parseInt(message.timestamp);
       messageData.push({
         x: timestamp,
         y: message.score,
       });
     });
-    const data = {
+    let data = {
       datasets: [
         {
           label: "Social Credit Vs Time",
           data: messageData,
           fill: true,
-          backgroundColor: "rgba(75,192,192,0.2)",
-          borderColor: "rgba(75,192,192,1)",
+          backgroundColor: bgColor,
+          borderColor: bgColor,
         },
       ],
     };
@@ -48,6 +79,13 @@ const Chart = (userName) => {
       elements: {
         point: {
           radius: 0,
+        },
+      },
+      plugins: {
+        legend: {
+          labels: {
+            color: "white",
+          },
         },
       },
       responsive: true,
@@ -65,8 +103,14 @@ const Chart = (userName) => {
       },
     };
     return (
-      <div style={{ width: width * 0.8, height: height * 0.9 }}>
-        <Line options={options} data={data} />
+      <div style={{ width: width * 0.7, height: height * 0.7 }}>
+        {messageData.length > 1 ? (
+          <Line ref={chartRef} options={options} data={data} />
+        ) : (
+          <h2 style={{ color: "white", paddingTop: 50 }}>
+            No data to display!
+          </h2>
+        )}
       </div>
     );
   }

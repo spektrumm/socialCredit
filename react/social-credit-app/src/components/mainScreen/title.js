@@ -11,7 +11,8 @@ export const Title = () => {
           fontWeight: "bold",
           fontSize: 60,
           color: "white",
-          paddingLeft: width / 2 - 170,
+          // margin: "auto",
+          // paddingLeft: width / 2 - 170,
         }}
       >
         Social Credit

@@ -8,22 +8,22 @@ import { Link } from "react-router-dom";
 //userName search bar
 export const SearchBar = () => {
   const { height, width } = useWindowDimensions();
-  const [search, setSearch] = useState("");
   const [result, setResult] = useState([]);
+  const [inputValue, setInputValue] = useState("");
   useEffect(() => {
-    if (search == "") {
+    if (inputValue == "") {
       setResult([]);
     } else {
-      GetUsersByName(search).then((result) => {
+      GetUsersByName(inputValue).then((result) => {
         setResult(result);
-        console.log(result);
       });
     }
-  }, [search]);
+  }, [inputValue]);
+  // <FormGroup style={{ paddingTop: 80, paddingRight: width / 8 }}>
 
   return (
     <Form>
-      <FormGroup style={{ paddingTop: 80, paddingRight: width / 8 }}>
+      <FormGroup>
         <Label style={{ color: "white", fontSize: 18, padding: 5 }}>
           Search User
         </Label>
@@ -37,14 +37,18 @@ export const SearchBar = () => {
           }}
           type="text"
           placeholder="Proto"
+          value={inputValue}
           onChange={(event) => {
-            setSearch(event.target.value);
+            setInputValue(event.target.value);
           }}
         />
         <div style={{ zIndex: 10, position: "absolute", paddingLeft: 150 }}>
           {result.map((data) => (
             <Link
               to={"/user/" + data.name}
+              onClick={(clicked) => {
+                setInputValue("");
+              }}
               style={{
                 fontSize: 18,
                 color: "white",
