@@ -3,6 +3,7 @@ const fs = require('fs');
 const mysql = require('mysql');
 const newMessage = require('./functions/newMessage.js');
 const newMessageBulk = require('./functions/newMessageBulk.js');
+const botToken = require('discordBotToken.json');
 
 
 
@@ -103,4 +104,4 @@ client.on('message', message =>
 
 
 
-client.login('OTYwMjk0MzI5Nzc4MzMxNzA4.YkoVyQ.32L_pqPkLA7QWAvLkTeMGZvp3GM');
+client.login(botToken);
