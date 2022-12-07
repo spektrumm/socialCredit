@@ -1,6 +1,7 @@
 import React from "react";
 import { Leaderboard } from "./leaderboard";
 
+//top scores leaderboard
 export const LeaderboardTop = () => {
   return (
     <div style={{ paddingRight: 30 }}>

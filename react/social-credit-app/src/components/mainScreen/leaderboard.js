@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Table } from "reactstrap";
 import { GetBottomUsers, GetTopUsers } from "../../requests";
+import { Link } from "react-router-dom";
 
+//returns a leaderboard html
 export const Leaderboard = (top) => {
   const [users, setUsers] = useState([]);
-
   useEffect(() => {
+    //initial top/bottom user data fetch + update every 5 second interval
     let requestData;
     if (top.top == true) {
       requestData = GetTopUsers();
@@ -28,7 +30,6 @@ export const Leaderboard = (top) => {
   }, []);
 
   if (users !== undefined) {
-    //console.log(users);
     return (
       <div
         style={{
@@ -49,7 +50,9 @@ export const Leaderboard = (top) => {
             {users.map((data) => (
               <tr key={data.place * data.score}>
                 <th scope="row">{data.place}</th>
-                <td>{data.name}</td>
+                <Link style={styles.link} to={"/user/" + data.name}>
+                  {data.name}
+                </Link>
                 <td>{data.score}</td>
               </tr>
             ))}
@@ -58,6 +61,15 @@ export const Leaderboard = (top) => {
       </div>
     );
   }
+};
+
+const styles = {
+  link: {
+    fontSize: 18,
+    color: "white",
+    textDecoration: "none",
+    paddingTop: 5,
+  },
 };
 
 export default Leaderboard;

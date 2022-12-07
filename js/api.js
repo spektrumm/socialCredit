@@ -4,14 +4,12 @@ const getTopUsers = require("./functions/getTopUsers.js");
 const getBottomUsers = require("./functions/getBottomUsers.js");
 const getUsersByName = require("./functions/getUsersByName.js");
 const getUserDataByName = require("./functions/getUserDataByName.js");
-
 const cors = require("cors");
 const PORT = 8080;
 
 app.use(cors());
 
 //load db config
-
 const db = mysql.createConnection({
   host: "127.0.0.1",
   user: "root",

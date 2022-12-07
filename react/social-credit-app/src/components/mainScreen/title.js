@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import useWindowDimensions from "../useWindowsDimentions";
 
+//Social Credit title 
 export const Title = () => {
   const { height, width } = useWindowDimensions();
   return (
@@ -10,7 +11,8 @@ export const Title = () => {
           fontWeight: "bold",
           fontSize: 60,
           color: "white",
-          paddingLeft: width / 2 - 170,
+          // margin: "auto",
+          // paddingLeft: width / 2 - 170,
         }}
       >
         Social Credit

@@ -1,98 +1,116 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { GetUserDataByName } from "../../requests";
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS, Ticks, TimeScale } from "chart.js/auto";
 import useWindowDimensions from "../useWindowsDimentions";
 import "chartjs-adapter-date-fns";
 
-const Chart = (userName) => {
-  const { height, width } = useWindowDimensions();
+const getGradient = (chart) => {
+  const chartBottom = chart.chartArea.bottom;
+  const chartTop = chart.chartArea.top;
+  const chartHeight = chartBottom - chartTop;
+  const pointZero = chart.scales.y.getPixelForValue(0);
+  const pointZeroHeight = pointZero - chartTop;
+  const pointZeroPercentage = pointZeroHeight / chartHeight;
 
-  const [user, setUser] = useState([]);
+  const gradient = chart.ctx.createLinearGradient(
+    0,
+    chartTop,
+    0,
+    chartHeight + chartTop
+  );
+  gradient.addColorStop(0, "rgba(10,10,58, 1)");
+  gradient.addColorStop(pointZeroPercentage, "rgba(34,96,122,0.5)");
+  gradient.addColorStop(pointZeroPercentage, "rgba(34,96,122,0.5)");
+  gradient.addColorStop(1, "rgba(10,10,58, 1)");
+  return gradient;
+};
+
+
+const Chart = (user) => {
+  const { height, width } = useWindowDimensions();
+  const [userData, setUserData] = useState(undefined);
+  const [bgColor, setBgColor] = useState("rgba(34,96,122,0.5)");
+
+  const chartRef = useRef(null);
   useEffect(() => {
-    GetUserDataByName(userName.userName).then((result) => {
-      setUser(result);
+    GetUserDataByName(user.userName).then((result) => {
+      setUserData(result);
+      //);
     });
+    const bgInterval = setInterval(() => {
+      const chart = chartRef.current;
+      if (chart !== null) {
+        setBgColor(getGradient(chart));
+        clearInterval(bgInterval);
+      }
+    }, 1);
 
     setInterval(() => {
-      GetUserDataByName(userName.userName).then((result) => {
+      GetUserDataByName(user.userName).then((result) => {
         let userData = result;
-        setUser(userData);
+        setUserData(userData);
       });
     }, 5000);
   }, []);
 
-  if (user !== undefined) {
-    let messages = [];
+  if (userData !== undefined) {
+    let messageData = [];
 
-    user.forEach((message) => {
-      let d = new Date(0);
-      d.setUTCMilliseconds(message.timestamp);
-      messages.push({ x: d, y: message.score });
+    userData.forEach((message, index) => {
+      let timestamp = parseInt(message.timestamp);
+      messageData.push({
+        x: timestamp,
+        y: message.score,
+      });
     });
-
-    const data = {
+    let data = {
       datasets: [
         {
           label: "Social Credit Vs Time",
-          data: messages,
+          data: messageData,
           fill: true,
-          // backgroundColor: "rgba(75,192,192,0.2)",
-          // backgroundColor: (context) => {
-          //   const ctx = context.chart.ctx;
-          //   const gradient = ctx.createLinearGradient(0, 0, 0, height);
-          //   gradient.addColorStop(0, "rgba(75,192,192,1)");
-          //   gradient.addColorStop(1, "rgba(27,27,39,0)");
-          //   return gradient;
-          // },
-          segment: {
-            borderColor: (ctx) => {
-              return ctx.p0.parsed.y >= 0
-                ? "rgba(75,192,192,1)"
-                : "rgba(248,51,60,1)";
-            },
-            backgroundColor: (ctx) => {
-              return ctx.p0.parsed.y >= 0
-                ? "rgba(75,192,192,0.2)"
-                : "rgba(248,51,60,0.2)";
-            },
-          },
-          pointRadius: 0,
-          borderWidth: 1,
-          tension: 1,
+          backgroundColor: bgColor,
+          borderColor: bgColor,
         },
       ],
     };
     const options = {
+      elements: {
+        point: {
+          radius: 0,
+        },
+      },
+      plugins: {
+        legend: {
+          labels: {
+            color: "white",
+          },
+        },
+      },
+      responsive: true,
+      maintainAspectRatio: true,
       scales: {
         x: {
           type: "time",
           time: {
-            unit: "day",
-            unitStepSize: 1,
-            displayFormats: {
-              day: "MM/dd/yyyy",
-            },
+            unit: "month",
           },
-          offset: true,
           ticks: {
-            maxTicksLimit: 20,
+            maxTicksLimit: 10,
           },
         },
       },
-      layout: { autoPadding: 100 },
-      responsive: true,
-      maintainAspectRatio: true,
-      parsed: true,
     };
-
     return (
-      <div style={{ width: width * 0.8, height: height * 0.9 }}>
-        <Line
-          options={options}
-          //style={{ padding: 10 }}
-          data={data}
-        />
+      <div style={{ width: width * 0.7, height: height * 0.7 }}>
+        {messageData.length > 1 ? (
+          <Line ref={chartRef} options={options} data={data} />
+        ) : (
+          <h2 style={{ color: "white", paddingTop: 50 }}>
+            No data to display!
+          </h2>
+        )}
       </div>
     );
   }
