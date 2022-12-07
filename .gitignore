@@ -11,13 +11,12 @@
 /mysql/node_modules
 /mysql/package-lock.json
 /msgIO
+/discordBotToken.json
 
 # copy pasted from react auto .gitignore
 
 # dependencies
 /react/social-credit-app/node_modules
-/react/social-credit-app/.pnp
-.pnp.js
 
 # testing
 /react/social-credit-app/coverage
