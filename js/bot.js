@@ -5,9 +5,7 @@ const newMessage = require('./functions/newMessage.js');
 const newMessageBulk = require('./functions/newMessageBulk.js');
 const {performance}  = require('perf_hooks');
 const vader = require('vader-sentiment');
-
-
-
+const botToken = require('discordBotToken.json');
 
 
 const client = new Discord.Client({fetchAllMembers: true});
@@ -105,4 +103,4 @@ client.on('message', message =>
 
 
 
-client.login('OTYwMjk0MzI5Nzc4MzMxNzA4.YkoVyQ.32L_pqPkLA7QWAvLkTeMGZvp3GM');
+client.login(botToken);
