@@ -1,3 +1,5 @@
+
+//return User object from discord mention
 module.exports =  function(client, mention){
 	if (!mention) return;
 

@@ -3,9 +3,9 @@ const fs = require('fs');
 const mysql = require('mysql');
 const newMessage = require('./functions/newMessage.js');
 const newMessageBulk = require('./functions/newMessageBulk.js');
+const {performance}  = require('perf_hooks');
+const vader = require('vader-sentiment');
 const botToken = require('discordBotToken.json');
-
-
 
 
 const client = new Discord.Client({fetchAllMembers: true});
@@ -76,8 +76,7 @@ client.on('message', message =>
         var cmd = args.shift();
     
         const command = client.commands.get(cmd);
-    
-        if (command) command.run(client, message, cmd, args, db);
+        if (command) command.run(client, message, cmd, args, db, vader);
     
         if (!command)
         {

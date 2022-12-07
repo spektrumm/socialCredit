@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 const fs = require('fs');
 
-
+//fetches all users from discord guildId:args and appends them to users.json
 module.exports.run = async (client, message, cmd, args, db) => {
     let users = [];
     const guild = await client.guilds.fetch(args);
