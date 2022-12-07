@@ -4,6 +4,8 @@ const getTopUsers = require("./functions/getTopUsers.js");
 const getBottomUsers = require("./functions/getBottomUsers.js");
 const getUsersByName = require("./functions/getUsersByName.js");
 const getUserDataByName = require("./functions/getUserDataByName.js");
+const getUserInfo = require("./functions/getUserInfo.js");
+
 const cors = require("cors");
 const PORT = 8080;
 
@@ -55,6 +57,15 @@ app.get("/data/getUsers/:userName", (req, res) => {
 app.get("/data/getUserData/:userName", (req, res) => {
   const userName = req.params.userName;
   getUserDataByName(userName, db)
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((e) => console.log("error -- ", e));
+});
+
+app.get("/data/getUserInfo/:userName", (req, res) => {
+  const userName = req.params.userName;
+  getUserInfo(userName, db)
     .then((data) => {
       res.send(data);
     })

@@ -24,4 +24,16 @@ const GetUserDataByName = (userName) => {
     .then((res) => res.data);
 };
 
-export { GetTopUsers, GetBottomUsers, GetUsersByName, GetUserDataByName };
+const GetUserInfoByName = (userName) => {
+  return axios
+    .get(`http://localhost:8080/data/getUserInfo/` + userName)
+    .then((res) => res.data);
+};
+
+export {
+  GetTopUsers,
+  GetBottomUsers,
+  GetUsersByName,
+  GetUserDataByName,
+  GetUserInfoByName,
+};

@@ -1,28 +1,44 @@
-import React from "react";
 import StatBlock from "./statBlock";
+import { GetUserInfoByName } from "../../requests";
+import React, { useState, useEffect } from "react";
 
-const StatsBar = (data) => {
+const StatsBar = (user) => {
   const currentScore = "Current Score";
   const messageStreak = "Message Streak";
-  const topScore = "Top Score";
-  //   const data = 1234;
+  const rank = "Rank";
+  const [userData, setUserData] = useState(undefined);
 
-  return (
+  useEffect(() => {
+    GetUserInfoByName(user.userName).then((result) => {
+      setUserData(result);
+    });
+    const getUserInfo = setInterval(() => {
+      GetUserInfoByName(user.userName).then((result) => {
+        let userData = result;
+        setUserData(userData);
+      });
+    }, 5000);
+
+    return () => {
+      clearInterval(getUserInfo);
+    };
+  }, []);
+
+  return userData != undefined ? (
     <div style={styles.bar}>
-      <StatBlock dataType={currentScore} data={data.data} />
-      <StatBlock dataType={messageStreak} data={data.data} />
-      <StatBlock dataType={topScore} data={data.data} />
+      <StatBlock dataType={currentScore} data={userData[0].score} />
+      <StatBlock dataType={messageStreak} data={userData[0].messageStreak} />
+      <StatBlock dataType={rank} data={userData[0].rank} />
     </div>
-  );
+  ) : null;
 };
 
 const styles = {
   bar: {
     display: "flex",
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "center",
-    width: "100%",
-    margin: "auto",
+    margin: 0,
   },
 };
 

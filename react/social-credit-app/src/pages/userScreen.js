@@ -17,11 +17,16 @@ const UserScreen = () => {
         <BackButton />
         <SearchBar />
       </div>
-      <div>
-        <StatsBar data={data} />
-      </div>
-      <div style={{ display: "flex", justifyContent: "center" }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+        }}
+      >
+        <StatsBar userName={user.userName} />
         <Chart key={user.userName} userName={user.userName} />
+        <div></div>
+        <div style={{ display: "flex", justifyContent: "center" }}></div>
       </div>
     </div>
   );

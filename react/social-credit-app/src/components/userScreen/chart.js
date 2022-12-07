@@ -19,13 +19,12 @@ const getGradient = (chart) => {
     0,
     chartHeight + chartTop
   );
-  gradient.addColorStop(0, "rgba(10,10,58, 1)");
-  gradient.addColorStop(pointZeroPercentage, "rgba(34,96,122,0.5)");
-  gradient.addColorStop(pointZeroPercentage, "rgba(34,96,122,0.5)");
-  gradient.addColorStop(1, "rgba(10,10,58, 1)");
+  gradient.addColorStop(0, "rgba(75,192,192,0.7)");
+  gradient.addColorStop(pointZeroPercentage, "rgba(27,27,39, 0.2)");
+  gradient.addColorStop(pointZeroPercentage, "rgba(27,27,39, 0.2)");
+  gradient.addColorStop(1, "rgba(248,51,60, 0.7)");
   return gradient;
 };
-
 
 const Chart = (user) => {
   const { height, width } = useWindowDimensions();
@@ -46,12 +45,16 @@ const Chart = (user) => {
       }
     }, 1);
 
-    setInterval(() => {
+    const getUserData = setInterval(() => {
       GetUserDataByName(user.userName).then((result) => {
         let userData = result;
         setUserData(userData);
       });
     }, 5000);
+
+    return () => {
+      clearInterval(getUserData);
+    };
   }, []);
 
   if (userData !== undefined) {
@@ -70,8 +73,20 @@ const Chart = (user) => {
           label: "Social Credit Vs Time",
           data: messageData,
           fill: true,
+          // borderColor: bgColor,
           backgroundColor: bgColor,
-          borderColor: bgColor,
+          segment: {
+            // backgroundColor: (ctx) => {
+            //   return ctx.p1.parsed.y >= 0
+            //     ? "rgba(75,192,192,0.2)"
+            //     : "rgba(248,51,60, 0.2)";
+            // },
+            borderColor: (ctx) => {
+              return ctx.p1.parsed.y >= 0
+                ? "rgba(75,192,192,1)"
+                : "rgba(248,51,60, 1)";
+            },
+          },
         },
       ],
     };
@@ -79,6 +94,7 @@ const Chart = (user) => {
       elements: {
         point: {
           radius: 0,
+          borderColor: "rgba(75, 192, 192, 1)",
         },
       },
       plugins: {
@@ -88,6 +104,7 @@ const Chart = (user) => {
           },
         },
       },
+      tension: 1,
       responsive: true,
       maintainAspectRatio: true,
       scales: {
@@ -97,13 +114,19 @@ const Chart = (user) => {
             unit: "month",
           },
           ticks: {
-            maxTicksLimit: 10,
+            maxTicksLimit: 15,
           },
         },
       },
     };
+
     return (
-      <div style={{ width: width * 0.7, height: height * 0.7 }}>
+      <div
+        style={{
+          width: width * 0.7,
+          height: height * 0.7,
+        }}
+      >
         {messageData.length > 1 ? (
           <Line ref={chartRef} options={options} data={data} />
         ) : (
