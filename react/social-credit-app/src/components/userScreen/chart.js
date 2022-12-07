@@ -67,6 +67,7 @@ const Chart = (user) => {
         y: message.score,
       });
     });
+    console.log(messageData.length);
     let data = {
       datasets: [
         {
@@ -97,6 +98,7 @@ const Chart = (user) => {
           borderColor: "rgba(75, 192, 192, 1)",
         },
       },
+      tension: messageData.length > 500 ? 0.8 : 0,
       plugins: {
         legend: {
           labels: {
@@ -104,7 +106,6 @@ const Chart = (user) => {
           },
         },
       },
-      tension: 1,
       responsive: true,
       maintainAspectRatio: true,
       scales: {
