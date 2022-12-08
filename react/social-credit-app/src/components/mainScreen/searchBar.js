@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Form, FormGroup, Input, Label } from "reactstrap";
-import useWindowDimensions from "../useWindowsDimentions";
 import { GetUsersByName } from "../../requests";
 import { Link } from "react-router-dom";
 
-
 //userName search bar
 export const SearchBar = () => {
-  const { height, width } = useWindowDimensions();
   const [result, setResult] = useState([]);
   const [inputValue, setInputValue] = useState("");
   useEffect(() => {
-    if (inputValue == "") {
+    if (inputValue === "") {
       setResult([]);
     } else {
       GetUsersByName(inputValue).then((result) => {

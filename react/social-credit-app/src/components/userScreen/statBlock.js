@@ -2,7 +2,7 @@ import React from "react";
 import useWindowDimensions from "../useWindowsDimentions";
 
 const StatBlock = (data) => {
-  const { width, height } = useWindowDimensions();
+  const { width } = useWindowDimensions();
   return (
     <div style={{ ...styles.block, width: width * 0.1 }}>
       <p style={styles.text}>{data.dataType}</p>
@@ -14,9 +14,12 @@ const StatBlock = (data) => {
 const styles = {
   block: {
     borderStyle: "solid",
-    borderColor: "#5F5F60",
+    borderColor: "#5D5D5F",
+    // backgroundColor: "#36333E",
+
+    borderRadius: 4,
     margin: 20,
-    marginLeft: 60,
+    marginLeft: 30,
     padding: 10,
     display: "flex",
     flexDirection: "column",
@@ -24,7 +27,7 @@ const styles = {
   text: {
     color: "white",
     fontSize: 18,
-    margin: 5,
+    margin: 1,
   },
 };
 

@@ -8,7 +8,6 @@ import StatsBar from "../components/userScreen/statsBar";
 
 const UserScreen = () => {
   const user = useParams();
-  const data = "1234";
 
   return (
     <div>

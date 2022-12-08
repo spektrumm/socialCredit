@@ -9,7 +9,7 @@ export const Leaderboard = (top) => {
   useEffect(() => {
     //initial top/bottom user data fetch + update every 5 second interval
     let requestData;
-    if (top.top == true) {
+    if (top.top) {
       requestData = GetTopUsers();
     } else {
       requestData = GetBottomUsers();
@@ -17,8 +17,8 @@ export const Leaderboard = (top) => {
     requestData.then((result) => {
       setUsers(result);
     });
-    setInterval(() => {
-      if (top.top == true) {
+    const refresh = setInterval(() => {
+      if (top.top) {
         requestData = GetTopUsers();
       } else {
         requestData = GetBottomUsers();
@@ -26,8 +26,12 @@ export const Leaderboard = (top) => {
       requestData.then((result) => {
         setUsers(result);
       });
-    }, 5000);
-  }, []);
+    }, 500);
+
+    return () => {
+      clearInterval(refresh);
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (users !== undefined) {
     return (
@@ -50,9 +54,11 @@ export const Leaderboard = (top) => {
             {users.map((data) => (
               <tr key={data.place * data.score}>
                 <th scope="row">{data.place}</th>
-                <Link style={styles.link} to={"/user/" + data.name}>
-                  {data.name}
-                </Link>
+                <td>
+                  <Link style={styles.link} to={"/user/" + data.name}>
+                    {data.name}
+                  </Link>
+                </td>
                 <td>{data.score}</td>
               </tr>
             ))}

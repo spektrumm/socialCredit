@@ -15,8 +15,8 @@ const mainScreen = () => {
       </div>
       <div style={{ alignItems: "center", justifyContent: "center" }}>
         <div style={styles.leaderboards}>
-          <LeaderboardTop />
-          <LeaderboardBottom />
+          <LeaderboardTop key={"LeaderboardTop"} />
+          <LeaderboardBottom key={"LeaderboardBottom"} />
         </div>
       </div>
     </div>

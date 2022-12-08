@@ -3,7 +3,7 @@ const calculateEffectiveScore = require("./calculateEffectiveScore.js");
 
 //handle a single newMessage by running sentiment analysis and updating user and message tables
 //with approprite data
-module.exports = async function (client, message, db, vader) {
+module.exports = async function (client, message, cmd, args, db, vader) {
   let userId = message.author.id;
   let messageId = message.id;
   let channelId = message.channel.id;
@@ -18,7 +18,7 @@ module.exports = async function (client, message, db, vader) {
       throw err;
     });
 
-    //fetch user data
+  //fetch user data
   let userSql = `SELECT * FROM users WHERE userId = ?`;
   let currentScore;
   let messageStreak;
@@ -46,10 +46,9 @@ module.exports = async function (client, message, db, vader) {
 
   let effectiveScoreChange;
   let newMessageStreak;
-  await calculateEffectiveScore(rawScoreChange, messageStreak).then((data) => {
-    effectiveScoreChange = parseInt(data[0]);
-    newMessageStreak = parseInt(data[1]);
-  });
+  let effectiveScore = calculateEffectiveScore(rawScoreChange, messageStreak);
+  effectiveScoreChange = parseInt(effectiveScore[0]);
+  newMessageStreak = parseInt(effectiveScore[1]);
 
   let newScore = parseInt(currentScore + effectiveScoreChange);
 
