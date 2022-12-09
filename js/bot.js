@@ -4,7 +4,7 @@ const mysql = require("mysql");
 const newMessage = require("./functions/newMessage.js");
 const joinVoice = require("./functions/joinVoiceChannel");
 const convertToWav = require("./functions/convertToWav.js");
-// const transcribe = require("./functions/transcribe.js");
+const transcribe = require("./functions/transcribe.js");
 const handleAudioConnections = require("./functions/handleAudioConnections");
 const { performance } = require("perf_hooks");
 const vader = require("vader-sentiment");
@@ -122,6 +122,7 @@ client.on("voiceStateUpdate", async (oldVoiceState, voiceState) => {
           mode: "pcm",
           end: "manual",
         });
+        receiver.pipe(fs.createWriteStream(`${member.id}-audio.pcm`));
         console.log(member.id);
         receivers.set(member.id, receiver);
       }
@@ -134,8 +135,12 @@ client.on("voiceStateUpdate", async (oldVoiceState, voiceState) => {
         console.log("not found");
         let receiver = receivers.get(memberId);
         receiver.end();
-        receiver.pipe(fs.createWriteStream(`${memberId}-audio.pcm`));
-        // transcribe(`${memberId}-audio.pcm`);
+        receivers.delete(memberId);
+        await new Promise((r) => setTimeout(r, 2000));
+        convertToWav(`${memberId}-audio`);
+        await new Promise((r) => setTimeout(r, 2000));
+
+        console.log(transcribe(`${memberId}-audio.wav`));
       }
     }
   }

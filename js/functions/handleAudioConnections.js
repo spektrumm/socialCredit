@@ -8,7 +8,7 @@ module.exports = async function (
   console.log("handleAudioConnections");
   if (connection !== null) {
     currentChannel.members.forEach((member) => {
-      if (member.bot !== true) {
+      if (member.bot === false) {
         let contains = false;
         currentConnections.forEach((connection) => {
           if ((connection.userId = member.user.id)) {
