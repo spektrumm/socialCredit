@@ -1,21 +1,20 @@
-const fs = require("fs");
-const Discord = require("discord.js");
-
-module.exports = async function (voiceState, currentChannelSize, client) {
-  if (voiceState.channel !== null) {
-    let channel = voiceState.channel;
-    console.log(
-      "currentChannelSize",
-      "channel.members.size",
-      currentChannelSize,
-      channel.members.size
-    );
-    if (channel.members.size >= currentChannelSize) {
-      //only changes channels if new channel has more people than old channel
-      connection = await channel.join();
-      //channel.join();
-      return connection;
+module.exports = async (botConnections) => {
+  if (voiceState.channel != null) {
+    if (botConnections.size == 0) {
+      await voiceState.channel
+        .join()
+        .then(() => console.log("Joined Channel"))
+        .catch(() => console.log("Did not join"));
+    } else {
+      if (
+        voiceState.channel.members.size >=
+        botConnections.first().channel.members.size
+      ) {
+        await voiceState.channel
+          .join()
+          .then(() => console.log("Joined Channel"))
+          .catch(() => console.log("Did not join"));
+      }
     }
   }
-  return false;
 };

@@ -3,11 +3,12 @@ var fs = require("fs");
 const { WaveFile } = require("wavefile");
 const wavefile = require("wavefile").WaveFile();
 
-module.exports = (fileName) => {
-  let file = `C:\\repos\\socialCredit\\js\\${fileName}`;
+// module.exports = (fileName) => {
+module.exports = (pcmData) => {
+  // let file = `C:\\repos\\socialCredit\\js\\${fileName}`;
 
-  // var pcmData = fs.readFileSync(`${memberId}-audio.pcm`);
-  var pcmData = fs.readFileSync(`${file}.pcm`);
+  // // var pcmData = fs.readFileSync(`${memberId}-audio.pcm`);
+  // var pcmData = fs.readFileSync(`${file}.pcm`);
 
   // read stereo audio file into signed 16 array
   const data = new Int16Array(pcmData);
@@ -27,7 +28,8 @@ module.exports = (fileName) => {
   });
   let wav = new WaveFile(wavData);
   wav.toSampleRate(16000);
-  fs.writeFileSync(`${file}.wav`, wav.toBuffer());
+  // fs.writeFileSync(`audio--${Date.now()}.wav`, wav.toBuffer());
+  return wav.toBuffer();
 };
 // function main() {
 //   const result = convertToWav("test");

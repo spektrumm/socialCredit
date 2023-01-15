@@ -6,9 +6,13 @@ const joinVoice = require("./functions/joinVoiceChannel");
 const convertToWav = require("./functions/convertToWav.js");
 const transcribe = require("./functions/transcribe.js");
 const handleAudioConnections = require("./functions/handleAudioConnections");
+const joinVoiceChannel = require("./functions/joinVoiceChannel");
+
+const handleAsyncVoiceStreams = require("./functions/handleVoiceStreams");
 const { performance } = require("perf_hooks");
 const vader = require("vader-sentiment");
 const botToken = require("./discordBotToken.json");
+const handleVoiceStreams = require("./functions/handleVoiceStreams");
 
 const client = new Discord.Client({ fetchAllMembers: true });
 const PREFIX = "&";
@@ -16,6 +20,12 @@ let currentChannelSize = 0;
 let currentConnection = null;
 let currentChannel = null;
 let receivers = new Map();
+
+const modelPath = "C:\\repos\\socialCredit\\js\\ttsModels\\model.tflite";
+const scorerPath =
+  "C:\\repos\\socialCredit\\js\\ttsModels\\huge-vocabulary.scorer";
+//load stt model
+const model = loadModel(modelPath, scorerPath);
 
 //load db config
 const db = mysql.createConnection({
@@ -92,191 +102,75 @@ client.on("voiceStateUpdate", async (oldVoiceState, voiceState) => {
     return;
   }
   let botConnections = client.voice.connections;
-  if (voiceState.channel != null) {
-    if (botConnections.size == 0) {
-      await voiceState.channel
-        .join()
-        .then(() => console.log("Joined Channel"))
-        .catch(() => console.log("Did not join"));
-    } else {
-      if (
-        voiceState.channel.members.size >=
-        botConnections.first().channel.members.size
-      ) {
-        await voiceState.channel
-          .join()
-          .then(() => console.log("Joined Channel"))
-          .catch(() => console.log("Did not join"));
-      }
-    }
-  }
+  await joinVoiceChannel(botConnections);
+  handleVoiceStreams(botConnections, model);
+  // if (voiceState.channel != null) {
+  //   if (botConnections.size == 0) {
+  //     await voiceState.channel
+  //       .join()
+  //       .then(() => console.log("Joined Channel"))
+  //       .catch(() => console.log("Did not join"));
+  //   } else {
+  //     if (
+  //       voiceState.channel.members.size >=
+  //       botConnections.first().channel.members.size
+  //     ) {
+  //       await voiceState.channel
+  //         .join()
+  //         .then(() => console.log("Joined Channel"))
+  //         .catch(() => console.log("Did not join"));
+  //     }
+  //   }
+  // }
 
-  if (botConnections.size != 0) {
-    botConnections.first().channel.members.forEach((member) => {
-      if (member.user.bot) {
-        return;
-      }
-      //create new connections
-      if (!receivers.has(member.id)) {
-        let receiver = botConnections.first().receiver.createStream(member, {
-          mode: "pcm",
-          end: "manual",
-        });
-        receiver.pipe(fs.createWriteStream(`${member.id}-audio.pcm`));
-        console.log(member.id);
-        receivers.set(member.id, receiver);
-      }
-    });
-    let it = receivers[Symbol.iterator]();
-    for (const item of it) {
-      let memberId = item[0];
-      console.log("searching for ", memberId);
-      if (!botConnections.first().channel.members.has(memberId)) {
-        console.log("not found");
-        let receiver = receivers.get(memberId);
-        receiver.end();
-        receivers.delete(memberId);
-        await new Promise((r) => setTimeout(r, 2000));
-        convertToWav(`${memberId}-audio`);
-        await new Promise((r) => setTimeout(r, 2000));
+  // if (botConnections.size != 0 && botConnections.first() != currentConnection) {
+  //   currentConnection = botConnections.first();
+  //   botConnections.first().on("speaking", async (user, speaking) => {
+  //     if (speaking.bitfield == 0 || user.bot) {
+  //       return;
+  //     }
+  //     // console.log(`I'm listening to ${user.username}`);
+  //     const audioStream = botConnections.first().receiver.createStream(user, {
+  //       mode: "pcm",
+  //     });
 
-        console.log(transcribe(`${memberId}-audio.wav`));
-      }
-    }
-  }
-
+  //     let buffer = [];
+  //     audioStream.on("data", (data) => {
+  //       buffer.push(data);
+  //     });
+  //     audioStream.on("end", async () => {
+  //       buffer = Buffer.concat(buffer);
+  //       const duration = buffer.length / 48000 / 4;
+  //       if (duration < 1.0) {
+  //         console.log("too short");
+  //         return;
+  //       }
+  //       let wavBuffer = convertToWav(buffer);
+  //       // console.log(wavBuffer);
+  //       let transcription = transcribe(wavBuffer);
+  //       // console.log(`${user.username} -- ${transcription}`);
+  //       fs.appendFile(
+  //         "./voiceText.txt",
+  //         `${user.username} -- ${transcription}\n`,
+  //         function (err) {
+  //           if (err) throw err;
+  //           console.log("Saved!");
+  //         }
+  //       );
+  //       // newMessage(client, transcription, "", "", db, vader);
+  //     });
+  //   });
+  //   botConnections.first().channel.members.forEach((member) => {
+  //     if (member.user.bot) {
+  //       return;
+  //     }
+  //   });
+  // }
   if (
     botConnections.size != 0 &&
     botConnections.first().channel.members.size == 1
   ) {
     botConnections.first().channel.leave();
   }
-
-  // } else if (oldVoiceState != null) {
-  //   let channels = oldVoiceState.guild.channels.cache;
-  //   channels.forEach(async (channel) => {
-  //     if (channel.type == voice) {
-  //       if (channel.members.size >= currentChannelSize) {
-  //         currentChannelSize = channel.members.size;
-  //         return await channel.join();
-  //       }
-  //     }
-  //   });
-  // }
-
-  // if (voiceState != null) {
-  //   if (currentConnection == null) {
-  //     currentConnection = await joinVoice(voiceState, 0, client);
-  //   } else {
-  //     let connection = await joinVoice(
-  //       voiceState,
-  //       currentConnection.channel.members.size,
-  //       client
-  //     );
-  //     if (connection != false) {
-  //       currentConnection = connection;
-  //     }
-  //   }
-  // }
-
-  // if (
-  //   currentConnection.channel != null &&
-  //   currentConnection.channel.members.size <= 1 &&
-  //   currentConnection.channel.members.at(0).user.bot == true
-  // ) {
-  //   console.log("Leaving Channel");
-  //   currentConnection.channel.leave();
-  //   currentConnection = null;
-  // }
-  // console.log(oldVoiceState.member.displayName, oldVoiceState.channel);
-  // console.log(voiceState.member.displayName, voiceState.channel);
-
-  // // console.log(currentChannel);
-
-  // currentChannel.members.forEach((member) => {
-  //   //create new connections
-  //   if (!receivers.has(member.id)) {
-  //     let receiver = currentConnection.receiver.createStream(member, {
-  //       mode: "pcm",
-  //       end: "manual",
-  //     });
-  //     receivers.set(member.id, receiver);
-  //   }
-  // });
-
-  // let it = receivers[Symbol.iterator]();
-  // for (const item of it) {
-  //   let memberId = item[0];
-  //   if (!currentChannel.members.has(memberId)) {
-  //     let receiver = currentChannel.members.get(memberId);
-  //     receiver.end();
-  //     receiver.pipe(fs.createWriteStream(`${connection.userId}-audio.pcm`));
-  //   }
-  // }
-
-  // let connection = null;
-  // let currentChannel = null;
-  // //if bot is not in a channel
-  // if (currentChannel === null) {
-  //   await joinVoice(voiceState, 0, client).then(async (newChannel) => {
-  //     if (newChannel !== false) {
-  //       currentChannel = newChannel.channel;
-  //       connection = newChannel.connection;
-  //       currentConnections = await handleAudioConnections(
-  //         connection,
-  //         currentChannel,
-  //         currentConnections
-  //       );
-  //       // ).then((connections) => {
-  //       //   currentConnections = connections;
-  //       //   console.log("test1");
-  //       // });
-  //     }
-  //   });
-  // } else {
-  //   let currentChannelSize = currentChannel.members.size;
-  //   await joinVoice(voiceState, currentChannelSize, client).then(
-  //     async (newChannel) => {
-  //       if (newChannel !== false) {
-  //         currentChannel = newChannel.channel;
-  //         connection = newChannel.connection;
-  //         currentConnections = await handleAudioConnections(
-  //           connection,
-  //           currentChannel,
-  //           currentConnections
-  //         );
-  //         // ).then((connections) => {
-  //         //   currentConnections = connections;
-  //         // });
-  //       }
-  //     }
-  //   );
-  // }
-  // if (currentChannel !== null && currentChannel.members.size <= 1) {
-  //   console.log("leaving", currentChannel.id);
-  //   currentChannel.leave();
-  //   currentChannel = null;
-  //   connection = null;
-  // }
-  // // console.log(currentConnections);
-
-  // if (
-  //   oldVoiceState.channelID !== voiceState.channelID &&
-  //   voiceState.channelID === null
-  // ) {
-  //   console.log("test", currentConnections);
-
-  //   currentConnections.forEach((connection, index) => {
-  //     console.log(connection.userId === voiceState.member.user.id);
-  //     if (connection.userId === voiceState.member.user.id) {
-  //       connection.receiver.end();
-  //       connection.receiver.pipe(
-  //         fs.createWriteStream(`${connection.userId}-audio.pcm`)
-  //       );
-  //       currentConnections.splice(index);
-  //     }
-  //   });
-  // }
 });
-
 client.login(botToken.token);
